@@ -1,0 +1,37 @@
+# Tritium CODEOWNERS — agent-keyed
+# Lines are evaluated top-to-bottom; the LAST matching pattern wins.
+
+# Default owner: Jesse (repo manager).
+*                                @jesse
+
+# Engineering surfaces → Sol.
+/src/                            @sol
+/scripts/                        @sol
+/.github/workflows/              @sol @rook
+/runtime/                        @sol
+
+# Content surfaces → Vex.
+/src/data/                       @vex
+/docs/wiki/                      @vex
+
+# QA surfaces → Rook.
+/tests/                          @rook
+/playwright-report/              @rook
+
+# Research / design / systems → respective leads.
+/docs/research/                  @robert
+/docs/design/                    @lux
+/docs/design/systems/            @nova
+
+# Agent files → owner-of-record.
+/.github/agents/Bridge.agent.md  @bridge
+/.github/agents/Sol.agent.md     @sol
+/.github/agents/Vex.agent.md     @vex
+/.github/agents/Rook.agent.md    @rook
+/.github/agents/Robert.agent.md  @robert
+/.github/agents/Lux.agent.md     @lux
+/.github/agents/Nova.agent.md    @nova
+/.github/agents/Jesse.agent.md   @jesse
+
+# TEAM.md → Jesse (canonical).
+/.github/TEAM.md                 @jesse

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tritium://schemas/settings.json",
+  "title": "Tritium SETTINGS.jsonc",
+  "type": "object",
+  "required": ["global", "agents"],
+  "properties": {
+    "global": {
+      "type": "object",
+      "properties": {
+        "default_model":             { "type": "string" },
+        "dashboard_port":            { "type": "integer", "minimum": 1024, "maximum": 65535 },
+        "db_path":                   { "type": "string" },
+        "auto_archive_after_days":   { "type": "integer", "minimum": 0 },
+        "premium_budget_hint":       { "enum": ["low", "medium", "high", "unlimited"] },
+        "dryRun":                    { "type": "boolean" },
+        "proposed_prompt_edits_dir": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "agents": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "independence":        { "type": "integer", "minimum": 0, "maximum": 10 },
+          "verbosity":           { "type": "integer", "minimum": 0, "maximum": 5 },
+          "inbox_check_interval":{ "type": "integer", "minimum": 1, "maximum": 100 },
+          "memory_write_quota":  { "type": "integer", "minimum": 0 },
+          "portfolio_size_limit":{ "type": "integer", "minimum": 0 },
+          "model_preference":    { "type": ["string", "null"] },
+          "temperature":         { "type": "number", "minimum": 0, "maximum": 1.5 },
+          "enabled":             { "type": "boolean" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

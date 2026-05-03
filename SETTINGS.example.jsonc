@@ -1,0 +1,128 @@
+// Tritium master settings file.
+// Copy to SETTINGS.jsonc and edit. Loaded by all adapters and the runtime.
+// Override path with: --settings /path/to/SETTINGS.jsonc
+{
+  // ─── Global ────────────────────────────────────────────────────────────────
+  "global": {
+    // Default model used when an agent has no model_preference set.
+    // Adapters map this to the appropriate provider (Copilot, Claude, Gemini, OpenAI, LM Studio).
+    "default_model": "claude-sonnet-4.5",
+
+    // Dashboard + REST + WebSocket port.
+    "dashboard_port": 7330,
+
+    // SQLite database path. Created on first run.
+    "db_path": "./.tritium/tritium.db",
+
+    // Archive read IMs older than N days into a compressed table. 0 = never.
+    "auto_archive_after_days": 30,
+
+    // Soft hint to all agents about your premium-API budget. Higher independence
+    // and lower verbosity will be preferred when this is "low".
+    // Valid: "low" | "medium" | "high" | "unlimited"
+    "premium_budget_hint": "medium",
+
+    // If true, adapters refuse to make outbound API calls and only print what
+    // they WOULD have sent. Flip to false when you are ready to spend real tokens.
+    "dryRun": true,
+
+    // Where agents write their proposed-prompt-edits. Only Bridge writes here.
+    "proposed_prompt_edits_dir": "./agents/bridge/proposed-prompt-edits"
+  },
+
+  // ─── Per-agent stats ───────────────────────────────────────────────────────
+  // Stat reference (see docs/settings-reference.md):
+  //   independence         0–10  How autonomously the agent operates. Higher =
+  //                              fewer clarification questions, more decisions
+  //                              made by Bridge between specialists.
+  //   verbosity            0–5   Output length budget. 0 = terse, 5 = thorough.
+  //   inbox_check_interval int   How often (in tool calls / checkpoints) the
+  //                              agent must `tritium inbox check`. 1 = every step.
+  //   memory_write_quota   int   Max memory writes per task. Prevents bloat.
+  //   portfolio_size_limit int   Max files in agent's portfolio before prune is required.
+  //   model_preference     str   Override global.default_model for this agent. null = inherit.
+  //   temperature          float 0.0–1.5. Lower for engineering, higher for creative.
+  //   enabled              bool  If false, Bridge will not dispatch to this agent.
+  "agents": {
+    "bridge": {
+      "independence": 7,
+      "verbosity": 3,
+      "inbox_check_interval": 1,
+      "memory_write_quota": 20,
+      "portfolio_size_limit": 50,
+      "model_preference": null,
+      "temperature": 0.2,
+      "enabled": true
+    },
+    "sol": {
+      "independence": 6,
+      "verbosity": 4,
+      "inbox_check_interval": 2,
+      "memory_write_quota": 30,
+      "portfolio_size_limit": 100,
+      "model_preference": null,
+      "temperature": 0.15,
+      "enabled": true
+    },
+    "vex": {
+      "independence": 6,
+      "verbosity": 5,
+      "inbox_check_interval": 5,
+      "memory_write_quota": 25,
+      "portfolio_size_limit": 100,
+      "model_preference": null,
+      "temperature": 0.7,
+      "enabled": true
+    },
+    "rook": {
+      "independence": 8,
+      "verbosity": 3,
+      "inbox_check_interval": 3,
+      "memory_write_quota": 20,
+      "portfolio_size_limit": 75,
+      "model_preference": null,
+      "temperature": 0.1,
+      "enabled": true
+    },
+    "robert": {
+      "independence": 8,
+      "verbosity": 5,
+      "inbox_check_interval": 4,
+      "memory_write_quota": 30,
+      "portfolio_size_limit": 150,
+      "model_preference": null,
+      "temperature": 0.4,
+      "enabled": true
+    },
+    "lux": {
+      "independence": 6,
+      "verbosity": 4,
+      "inbox_check_interval": 4,
+      "memory_write_quota": 20,
+      "portfolio_size_limit": 100,
+      "model_preference": null,
+      "temperature": 0.5,
+      "enabled": true
+    },
+    "nova": {
+      "independence": 7,
+      "verbosity": 4,
+      "inbox_check_interval": 4,
+      "memory_write_quota": 25,
+      "portfolio_size_limit": 100,
+      "model_preference": null,
+      "temperature": 0.25,
+      "enabled": true
+    },
+    "jesse": {
+      "independence": 8,
+      "verbosity": 3,
+      "inbox_check_interval": 3,
+      "memory_write_quota": 25,
+      "portfolio_size_limit": 75,
+      "model_preference": null,
+      "temperature": 0.2,
+      "enabled": true
+    }
+  }
+}

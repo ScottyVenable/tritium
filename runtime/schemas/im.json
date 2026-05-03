@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tritium://schemas/im.json",
+  "title": "Tritium IM message",
+  "type": "object",
+  "required": ["from", "to", "body"],
+  "properties": {
+    "from":     { "type": "string", "minLength": 1, "maxLength": 64,  "description": "Sender agent name or 'you'." },
+    "to":       { "type": "string", "minLength": 1, "maxLength": 64,  "description": "Recipient agent name." },
+    "body":     { "type": "string", "minLength": 1, "maxLength": 32000 },
+    "threadId": { "type": ["integer", "null"], "minimum": 1 },
+    "subject":  { "type": "string", "maxLength": 300, "description": "Optional. If set without threadId, a new thread is created." }
+  },
+  "additionalProperties": false
+}

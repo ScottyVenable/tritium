@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <title>Tritium</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="topbar" role="banner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">Tritium</span>
+      <span class="brand-version" id="version">v0.1.0</span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" class="tab" data-route="im" aria-selected="true">IM</button>
+      <button role="tab" class="tab" data-route="email">Email</button>
+      <button role="tab" class="tab" data-route="agents">Agents</button>
+      <button role="tab" class="tab" data-route="settings">Settings</button>
+      <button role="tab" class="tab" data-route="timeline">Timeline</button>
+    </nav>
+    <div class="status" id="status" aria-live="polite">connecting…</div>
+  </header>
+
+  <main id="view" class="view" tabindex="-1"></main>
+
+  <footer class="footer">
+    <span>Local-only. No telemetry.</span>
+    <span id="db-info"></span>
+  </footer>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

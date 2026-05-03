@@ -1,0 +1,23 @@
+{
+  "name": "@tritium/runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tritium runtime: SQLite message bus, REST + WebSocket API, dashboard server, CLI.",
+  "main": "src/index.js",
+  "bin": {
+    "tritium": "./cli/tritium.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "verify": "node src/verify.js",
+    "cli": "node ../cli/tritium.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,242 @@
+/* Tritium dashboard — minimalist dark theme.
+   Mobile-first; breaks at 720px for two-column layouts.
+   No external CDN. All assets local. */
+
+:root {
+  --bg-0:      #0b0d10;
+  --bg-1:      #11151a;
+  --bg-2:      #161b21;
+  --bg-3:      #1d242c;
+  --line:      #232c36;
+  --text-0:    #e8edf3;
+  --text-1:    #b6c1cd;
+  --text-2:    #7c8896;
+  --accent:    #6ea8ff;
+  --accent-2:  #b48cff;
+  --good:      #5dd39e;
+  --warn:      #ffb454;
+  --bad:       #ff6b6b;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+
+  --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg-0);
+  color: var(--text-0);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button {
+  font: inherit;
+  background: var(--bg-3);
+  color: var(--text-0);
+  border: 1px solid var(--line);
+  padding: 0.55rem 0.9rem;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  min-height: 44px;
+}
+button:hover { background: #232b36; }
+button.primary {
+  background: linear-gradient(180deg, #2a4a8a, #1f3a72);
+  border-color: #2a4a8a;
+}
+button.primary:hover { filter: brightness(1.08); }
+
+input, textarea, select {
+  font: inherit;
+  background: var(--bg-2);
+  color: var(--text-0);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 0.55rem 0.7rem;
+  min-height: 44px;
+  width: 100%;
+}
+textarea { min-height: 96px; resize: vertical; }
+
+/* ─── Topbar ──────────────────────────────────────────────── */
+.topbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 10;
+}
+.brand { display: flex; align-items: baseline; gap: 0.6rem; }
+.brand-mark {
+  width: 12px; height: 12px; border-radius: 3px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: inline-block;
+}
+.brand-name { font-weight: 600; letter-spacing: 0.02em; }
+.brand-version { color: var(--text-2); font-family: var(--font-mono); font-size: 12px; }
+
+.tabs {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.tab {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  padding: 0.45rem 0.75rem;
+  color: var(--text-1);
+  min-height: 40px;
+  white-space: nowrap;
+}
+.tab[aria-selected="true"] {
+  background: var(--bg-3);
+  color: var(--text-0);
+  border-color: var(--line);
+}
+.status {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-2);
+  justify-self: end;
+}
+.status.ok { color: var(--good); }
+.status.bad { color: var(--bad); }
+
+@media (min-width: 720px) {
+  .topbar {
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: 1fr;
+  }
+  .tabs { grid-column: auto; justify-self: center; }
+}
+
+/* ─── View ────────────────────────────────────────────────── */
+.view {
+  padding: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.view h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.card {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.muted { color: var(--text-2); }
+.row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+.row > * { min-width: 0; }
+.grow { flex: 1 1 auto; }
+
+/* ─── IM / Email lists ────────────────────────────────────── */
+.msg {
+  border-bottom: 1px solid var(--line);
+  padding: 0.6rem 0;
+}
+.msg:last-child { border-bottom: 0; }
+.msg-meta {
+  display: flex; gap: 0.5rem; align-items: baseline;
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-2);
+}
+.msg-from { color: var(--accent); font-weight: 600; }
+.msg-to { color: var(--accent-2); }
+.msg-time { margin-left: auto; }
+.msg-body {
+  margin: 0.3rem 0 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 0.95rem;
+}
+.msg-subject { font-weight: 600; margin-top: 0.3rem; }
+
+.compose {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr;
+  margin-top: 0.5rem;
+}
+@media (min-width: 720px) {
+  .compose .row-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+}
+
+/* ─── Agents ──────────────────────────────────────────────── */
+.agents-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+@media (min-width: 720px) {
+  .agents-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+}
+.agent-card .name { font-weight: 600; font-size: 1rem; }
+.agent-card .role { color: var(--text-2); font-size: 0.9rem; margin-bottom: 0.4rem; }
+.agent-card .stats { font-family: var(--font-mono); font-size: 12px; color: var(--text-1); }
+.agent-card .heartbeat { color: var(--text-2); font-family: var(--font-mono); font-size: 11px; margin-top: 0.4rem; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 0.4rem; vertical-align: middle; }
+.dot.on  { background: var(--good); }
+.dot.off { background: var(--text-2); }
+
+/* ─── Settings (read-only in v0.1) ───────────────────────── */
+.settings-pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* ─── Timeline ────────────────────────────────────────────── */
+.timeline-row {
+  display: grid;
+  grid-template-columns: 70px 60px 1fr;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.92rem;
+}
+.timeline-row .kind { font-family: var(--font-mono); color: var(--text-2); font-size: 11px; }
+.timeline-row .time { font-family: var(--font-mono); color: var(--text-2); font-size: 11px; }
+
+/* ─── Footer ─────────────────────────────────────────────── */
+.footer {
+  display: flex; justify-content: space-between;
+  padding: 0.75rem 1rem;
+  color: var(--text-2);
+  font-size: 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* ─── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

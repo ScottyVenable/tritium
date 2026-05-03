@@ -1,0 +1,15 @@
+# Build artifacts
+dist/
+
+# Runtime caches
+.tritium/
+.tritium-verify/
+
+# Node
+node_modules/
+
+# Backups created by install.sh
+*.bak
+
+# Local SETTINGS overrides (the example file IS committed)
+SETTINGS.jsonc

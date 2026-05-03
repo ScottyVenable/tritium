@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tritium://schemas/handoff.json",
+  "title": "Tritium handoff packet",
+  "type": "object",
+  "required": ["from", "to", "subject", "summary", "readiness", "next_actions"],
+  "properties": {
+    "from":         { "type": "string", "description": "Sending agent." },
+    "to":           { "type": "string", "description": "Receiving agent." },
+    "subject":      { "type": "string", "minLength": 1, "maxLength": 300 },
+    "summary":      { "type": "string", "minLength": 1 },
+    "readiness":    { "enum": ["draft", "ready", "blocked"] },
+    "blockers":     { "type": "array", "items": { "type": "string" } },
+    "next_actions": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "artifacts":    {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "ref"],
+        "properties": {
+          "kind": { "enum": ["file", "url", "issue", "pr"] },
+          "ref":  { "type": "string" },
+          "note": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "done_when":    { "type": "string", "description": "One-sentence done-definition." }
+  },
+  "additionalProperties": false
+}

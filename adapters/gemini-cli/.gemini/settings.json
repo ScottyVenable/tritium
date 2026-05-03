@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/gemini-cli-settings",
+  "_comment": "Tritium baseline. Adjust to your local shell and editor preferences.",
+  "tools": {
+    "shell": {
+      "allow": [
+        "git",
+        "node",
+        "npm",
+        "tritium",
+        "ls",
+        "cat",
+        "rg",
+        "grep",
+        "fd"
+      ]
+    }
+  },
+  "context": {
+    "loadOrder": [
+      "GEMINI.md",
+      "agents/bridge.md"
+    ]
+  }
+}
