@@ -24,6 +24,14 @@ from .scheduler import pick_action, pick_agent, record_email_sent
 def _setup_logging(repo_root: Path) -> None:
     log_dir = repo_root / "logs"
     log_dir.mkdir(parents=True, exist_ok=True)
+    # Reconfigure stdout to UTF-8 with replacement so emoji/curly-quote
+    # output from local models can never crash the tick on Windows
+    # cp1252 consoles. Best-effort: older Pythons may not support it.
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     handlers = [
         logging.FileHandler(log_dir / "bridge.log", encoding="utf-8"),
         logging.StreamHandler(sys.stdout),

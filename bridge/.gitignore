@@ -6,3 +6,4 @@ sent/
 outbox/
 logs/
 .venv/
+.scoring-*/
