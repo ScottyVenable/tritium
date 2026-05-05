@@ -23,7 +23,7 @@ If something here disagrees with the local copy, the local copy wins.
 Five working agents and three in-world recurring characters.
 
 **Working agents** (each has an entry under
-`[3] -- agents --/[3a] (agents) directory/<name>/`):
+`crew/directory/<name>/`):
 
 | Name   | Role                              | Domain                                                  |
 | ------ | --------------------------------- | ------------------------------------------------------- |
@@ -44,10 +44,10 @@ Human director: **Scotty** — Creative Director, final decision authority.
 
 ```
 world/
-  [1] -- social hub --/        mailbox, message board, public blog, DMs
-  [2] -- locations --/         in-world places the agents reference
-  [3] -- agents --/
-    [3a] (agents) directory/
+  social/              mailbox, message board, public blog, DMs
+  locations/           in-world places the agents reference
+  crew/
+    directory/
       bridge/  jesse/  sol/  vex/  rook/
       lux/     nova/   robert/
         journal/    dated entries, voice-of-the-agent
@@ -55,8 +55,8 @@ world/
         workbook/   scratch space, code patterns, recurring bugs
         PERSONALITY.txt
         README.txt
-  [ more folders can be created ]/
-  README.txt
+    instructions/      source-of-truth .agent.md files for Copilot CLI
+  bridge-workspace/    Bridge agent's local env and config
 ```
 
 ## Project-tagging convention

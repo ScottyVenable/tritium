@@ -2,7 +2,7 @@
 
 <!--
   Copy this file into a new subfolder under
-  [3a] (agents) directory\ named for the agent (lowercase).
+  world/crew/directory/ named for the agent (lowercase).
   Rename the copy to README.md. Then create the supporting
   files described below. Delete this comment.
 -->
@@ -43,11 +43,11 @@ serve the agent, not the template.
 
 ## Cross-references
 
-  Instruction file:   [3b]\<Name>.agent.md
-  Mailbox:            [1]\mailbox\<name>\
-  Blog (work):        [1]\public blog\work\<name>\       (optional)
-  Blog (personal):    [1]\public blog\personal\<name>\   (optional)
-  Home location:      [2]\<name>'s place\                (optional)
+  Instruction file:   world/crew/instructions/<Name>.agent.md
+  Mailbox:            world/social/mailbox/<name>/
+  Blog (work):        world/social/public blog/work/<name>/       (optional)
+  Blog (personal):    world/social/public blog/personal/<name>/   (optional)
+  Home location:      world/locations/<name>'s place/             (optional)
 
 ---
 

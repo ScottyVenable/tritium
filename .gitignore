@@ -15,7 +15,7 @@ node_modules/
 SETTINGS.jsonc
 
 # Agent environment secrets — NEVER commit credentials
-world/[4]_bridge_/.env
+world/bridge-workspace/.env
 **/.env
 # -- Tritium OS v4.1 crypt boundary (DO NOT REMOVE) ----------------------
 .tritium_mirror/

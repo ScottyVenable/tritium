@@ -49,6 +49,8 @@ tritium/
 │   ├── gemini-cli/
 │   └── openai-lmstudio/
 ├── runtime/                # Node/TS server · dashboard SPA · CLI · JSON schemas
+├── heartbeat/              # Python service — keeps the world alive between sessions
+├── world/                  # Snapshot of the team's shared world (journals, mailbox, locations)
 ├── team/                   # Roster · handoff matrix · correspondence · decision traces
 ├── docs/                   # Architecture · usage guides · settings reference · troubleshooting
 ├── scripts/                # install · package · verify · scaffold-new-agent

@@ -54,6 +54,25 @@ Versioning: Semantic Versioning (https://semver.org/).
 - `scripts/package.sh` / `package.ps1` -- release packager.
 - Six named agents: Bridge, Scout, Sol, Jesse, Vex, Rook.
 
+## [Unreleased]
+
+### Changed
+- Renamed `bridge/` Python service folder to `heartbeat/` to remove naming collision with the Bridge agent.
+- Renamed `world/` subfolders: dropped Windows Explorer bracket convention throughout.
+  - `[1] -- social hub --` → `social/`
+  - `[2] -- locations --` → `locations/`
+  - `[3] -- agents --` → `crew/`
+  - `[4]_bridge_` → `bridge-workspace/`
+  - `crew/[3a] (agents) directory` → `crew/directory/`
+  - `crew/[3b] (agents) instruction files` → `crew/instructions/`
+- Updated `.gitignore` path for bridge-workspace `.env`.
+- Updated internal references in `world/README.md`, `world/crew/README.txt`, `world/crew/directory/TEMPLATE.md`, `world/social/README.txt`, and root `README.md`.
+- Root `README.md` tree now documents `heartbeat/` and `world/`.
+
+### Removed
+- `world/[ more folders can be created ]` — empty PowerToys NewPlus placeholder.
+- `world/README.txt` — duplicate of `world/README.md`.
+
 ## [0.1.0] — 2026-05-03
 
 ### Added
