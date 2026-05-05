@@ -1,0 +1,13 @@
+[project]
+name = "tritium-bridge"
+version = "0.1.0"
+description = "Local-first agent runtime that connects the Tritium team to LM Studio, SMTP/IMAP, and the world tree."
+requires-python = ">=3.11"
+dependencies = ["httpx>=0.27", "python-dotenv>=1.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["tritium_bridge*"]
