@@ -10,6 +10,7 @@ from .context import append_turn, build_messages, load_context, maybe_condense, 
 from .lmstudio import LMStudioClient
 from .mailer import archive_outbox, archive_sent, build_message, send_smtp
 from .personas import system_prompt_for
+from .tools import TOOL_SCHEMAS, execute_tool_call
 from .worldcontext import build_recent_world
 
 log = logging.getLogger("tritium_bridge.actions")
@@ -44,17 +45,84 @@ def _scrub_names(text: str) -> str:
     return out
 
 
+# House rule: no emojis in any committed agent output. Local models
+# occasionally emit a stray pictograph (eyes, sparkles, etc) which both
+# violates the style guide and crashes Windows cp1252 consoles. Strip
+# the major Unicode emoji blocks deterministically before we print or
+# write to disk.
+import re as _re_mod
+_EMOJI_RE = _re_mod.compile(
+    "["
+    "\U0001F300-\U0001FAFF"  # symbols & pictographs, emoticons, transport, etc.
+    "\U00002600-\U000027BF"  # misc symbols + dingbats
+    "\U0001F1E6-\U0001F1FF"  # regional indicators (flags)
+    "\U0000FE0F"             # variation selector-16
+    "]",
+    flags=_re_mod.UNICODE,
+)
+
+
+# Fake tool-call blocks: some local models hallucinate non-existent tools
+# inline as bracketed pseudo-XML. Strip these deterministically before
+# we write the output to disk so they never leak into journals/posts.
+_FAKE_TOOL_BLOCK = _re_mod.compile(
+    r"\[TOOL_REQUEST\].*?\[END_TOOL_REQUEST\]",
+    flags=_re_mod.DOTALL | _re_mod.IGNORECASE,
+)
+_FAKE_TOOL_NAME_LEAK = _re_mod.compile(
+    r"\b(?:reading_recent_journals|read_recent_journals|read_team_facts|"
+    r"read_message_board|read_mailbox|read_blog_posts|read_personality)\b",
+    flags=_re_mod.IGNORECASE,
+)
+
+
+def _strip_fake_tool_artifacts(text: str) -> str:
+    cleaned = _FAKE_TOOL_BLOCK.sub("", text)
+    cleaned = _FAKE_TOOL_NAME_LEAK.sub("(tool)", cleaned)
+    return cleaned
+
+
+def _strip_emojis(text: str) -> str:
+    return _EMOJI_RE.sub("", text)
+
+
 # ----- shared helper -----
 
 def _generate(cfg: Config, llm: LMStudioClient, agent: str, user_prompt: str,
               max_tokens: int = 500, temperature: float = 0.8) -> str:
     world = build_recent_world(cfg, agent)
     sys_prompt = system_prompt_for(cfg, agent, world_context=world)
-    msgs = build_messages(cfg, agent, sys_prompt, user_prompt)
+    # Soft nudge appended to every user prompt: encourages tool use when
+    # the model isn't sure of a fact, and forbids inventing teammates,
+    # work items, or quotes. Keeps round-3 hallucinations from leaking
+    # back in once the world-context window gets noisy.
+    grounded_prompt = (
+        user_prompt
+        + "\n\nGrounding rules:\n"
+        + "- If you are about to mention a specific recent decision, PR, "
+          "build outcome, or quote and you are not certain it happened, "
+          "call read_recent_journals or read_message_board first.\n"
+        + "- Do not invent teammate names, projects, or work items. "
+          "If unsure, paraphrase or speak generally.\n"
+        + "- Make at most one tool call per turn. After the tool result "
+          "comes back, write the actual entry."
+    )
+    msgs = build_messages(cfg, agent, sys_prompt, grounded_prompt)
     sections = ["facts"] + (["world"] if world else []) + ["persona"]
     approx_tokens = sum(len(m["content"]) for m in msgs) // 4
     log.info("prompt_assembled tokens=%d sections=%s", approx_tokens, ",".join(sections))
-    text = llm.chat(msgs, max_tokens=max_tokens, temperature=temperature)
+    text = llm.chat(
+        msgs,
+        max_tokens=max_tokens,
+        temperature=temperature,
+        tools=TOOL_SCHEMAS,
+        tool_executor=lambda name, args_json: execute_tool_call(cfg, name, args_json),
+    )
+
+    # Apply house-rule emoji strip + fake-tool-block strip before any
+    # further processing.
+    text = _strip_emojis(text)
+    text = _strip_fake_tool_artifacts(text)
 
     # Post-generation guard: if the model emitted a banned name variant,
     # retry once with a sharp reminder appended to the user prompt. If the
