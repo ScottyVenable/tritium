@@ -13,3 +13,7 @@ node_modules/
 
 # Local SETTINGS overrides (the example file IS committed)
 SETTINGS.jsonc
+
+# Agent environment secrets — NEVER commit credentials
+world/[4]_bridge_/.env
+**/.env

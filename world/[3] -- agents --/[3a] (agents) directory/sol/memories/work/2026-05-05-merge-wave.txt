@@ -1,5 +1,3 @@
-Project: DesktopPal
-
 2026-05-05 — merge wave
 
 shipped:
