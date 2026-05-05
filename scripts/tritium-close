@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Tritium OS v4.1 -- tritium-close
+# Re-encrypt .tritium_mirror/ payload back to vault and shred plaintext.
+# Logs tier_snapback. Never stages mirror paths.
+# Usage: tritium-close <payload-id>
+
+set -euo pipefail
+
+PAYLOAD_ID="${1:-}"
+[ -z "$PAYLOAD_ID" ] && { printf '[FAIL] Usage: tritium-close <payload-id>\n' >&2; exit 1; }
+
+TRITIUM_HOME="${TRITIUM_HOME:-$HOME/.tritium-os}"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+
+[ -f "$HERE/tritium-crypt" ] || { printf '[FAIL] tritium-crypt not found at %s\n' "$HERE/tritium-crypt" >&2; exit 3; }
+python3 "$HERE/tritium-crypt" close "$PAYLOAD_ID"
+RC=$?
+
+LEDGER_DB="${TRITIUM_LEDGER_DB:-$TRITIUM_HOME/ledger/ledger.db}"
+REPO_ROOT="$(cd "$HERE/.." && pwd)"
+if command -v python3 >/dev/null 2>&1 && [ -f "$LEDGER_DB" ]; then
+    python3 - <<INNERPY 2>/dev/null || true
+import sys; sys.path.insert(0, '$REPO_ROOT/bridge')
+try:
+    from tritium_bridge.ledger import Ledger
+    L = Ledger('$LEDGER_DB')
+    L.log_event(kind='vault_close', agent='system', payload={'payload_id':'$PAYLOAD_ID'})
+    L.log_event(kind='tier_snapback', agent='system',
+        payload={'to_tier':0,'to_agent':'scout','closed_payloads':['$PAYLOAD_ID']})
+except Exception: pass
+INNERPY
+fi
+exit "$RC"

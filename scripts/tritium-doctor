@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+# Tritium OS v4.1 -- tritium-doctor
+# Full diagnostics per SECURITY-tritium-crypt.md section 7.
+# Exits non-zero if any FAIL is found.
+# Usage: tritium-doctor [--json]
+
+set -uo pipefail
+
+# Collect failures
+FAILS=0
+OUT_JSON="${1:-}"
+
+TRITIUM_HOME="${TRITIUM_HOME:-$HOME/.tritium-os}"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$HERE/.." && pwd)"
+MANIFEST="$REPO_ROOT/world_vault/manifest.json"
+REGISTRY="$REPO_ROOT/registry/models.json"
+LEDGER_DB="${TRITIUM_LEDGER_DB:-$TRITIUM_HOME/ledger/ledger.db}"
+SHIELD_FILE="$TRITIUM_HOME/state/shield.ok"
+KEYS_DIR="$TRITIUM_HOME/keys"
+MIRROR="${TRITIUM_MIRROR_DIR:-$REPO_ROOT/.tritium_mirror}"
+
+_ok()   { printf '[ OK ] %s\n' "$1"; }
+_warn() { printf '[WARN] %s\n' "$1"; }
+_fail() { printf '[FAIL] %s\n' "$1" >&2; FAILS=$(( FAILS + 1 )); }
+
+printf '+--- tritium-doctor (%s) ' "$(date '+%Y-%m-%d %H:%M:%S')" && printf '%0.s-' {1..28} && printf '+\n'
+
+# 1. Agent files
+printf '\n[1] Agent files\n'
+for f in ".github/agents/Bridge.agent.md" ".github/agents/Scout.agent.md" \
+          ".github/agents/Sol.agent.md" ".github/agents/Jesse.agent.md" \
+          ".github/agents/Vex.agent.md" ".github/agents/Rook.agent.md" \
+          "AGENTS.md" "agents/scout/agent.md"; do
+    if [ -f "$REPO_ROOT/$f" ]; then _ok "$f"
+    else _fail "Missing agent file: $REPO_ROOT/$f"
+    fi
+done
+
+# 2. Scout availability
+printf '\n[2] Scout availability\n'
+if command -v python3 >/dev/null 2>&1; then
+    _ok "python3 found: $(python3 --version 2>&1)"
+else
+    _fail "python3 not on PATH"
+fi
+if [ -f "$REPO_ROOT/.github/agents/Scout.agent.md" ]; then
+    _ok "Scout.agent.md present"
+else
+    _fail "Scout.agent.md missing"
+fi
+
+# 3. Registry
+printf '\n[3] Registry\n'
+if [ -f "$REGISTRY" ]; then
+    python3 -c "import json, sys; json.load(open('$REGISTRY'))" 2>/dev/null \
+        && _ok "registry/models.json valid JSON" \
+        || _fail "registry/models.json invalid JSON"
+else
+    _fail "registry/models.json missing"
+fi
+[ -f "$REPO_ROOT/registry/credits.ledger" ] && _ok "credits.ledger present" || _warn "credits.ledger absent"
+
+# 4. Vault manifest
+printf '\n[4] Vault\n'
+if [ -f "$MANIFEST" ]; then
+    python3 -c "import json, sys; json.load(open('$MANIFEST'))" 2>/dev/null \
+        && _ok "world_vault/manifest.json valid JSON" \
+        || _fail "world_vault/manifest.json invalid JSON"
+else
+    _fail "world_vault/manifest.json missing"
+fi
+OPEN_COUNT=0
+if [ -d "$MIRROR" ]; then
+    for pd in "$MIRROR"/*/; do
+        pid=$(basename "$pd")
+        [ "$pid" = "*" ] && continue
+        [ -f "$pd/payload" ] && OPEN_COUNT=$(( OPEN_COUNT + 1 ))
+    done
+fi
+if [ "$OPEN_COUNT" -gt 0 ]; then
+    _fail "Open mirror payloads: $OPEN_COUNT -- run tritium-close"
+else
+    _ok "No open mirror payloads"
+fi
+
+# 5. Crypto library
+printf '\n[5] Crypto library\n'
+if python3 -c "from cryptography.hazmat.primitives.ciphers.aead import AESGCM" 2>/dev/null; then
+    _ok "cryptography package installed"
+else
+    _fail "cryptography not installed -- pip install cryptography"
+fi
+
+# 6. Cryptographic keys
+printf '\n[6] Cryptographic keys\n'
+for kf in "id.ed25519" "wrap.x25519"; do
+    if [ -f "$KEYS_DIR/$kf" ]; then
+        _ok "Key present: $KEYS_DIR/$kf"
+    else
+        _fail "Key MISSING: $KEYS_DIR/$kf -- run: tritium-crypt init-keys"
+    fi
+done
+
+# 7. Staging guard (no .tritium_mirror in git index)
+printf '\n[7] Staging guard\n'
+if git -C "$REPO_ROOT" ls-files --error-unmatch ".tritium_mirror" >/dev/null 2>&1; then
+    _fail ".tritium_mirror is tracked by git -- remove with: git rm -r --cached .tritium_mirror"
+elif git -C "$REPO_ROOT" diff --cached --name-only 2>/dev/null | grep -q '\.tritium_mirror'; then
+    _fail ".tritium_mirror staged in index"
+else
+    _ok ".tritium_mirror not tracked or staged"
+fi
+
+# 8. Shield freshness
+printf '\n[8] Shield\n'
+if [ -f "$SHIELD_FILE" ]; then
+    now=$(date +%s)
+    mtime=$(stat -c %Y "$SHIELD_FILE" 2>/dev/null || stat -f %m "$SHIELD_FILE" 2>/dev/null || echo "$now")
+    age=$(( now - mtime ))
+    if [ "$age" -le 86400 ]; then
+        _ok "Shield fresh: ${age}s old"
+    else
+        _warn "Shield stale: ${age}s old (> 86400). Run: tritium-authorize"
+    fi
+else
+    _warn "shield.ok not found at $SHIELD_FILE"
+fi
+
+# 9. Ledger
+printf '\n[9] Ledger\n'
+if [ -f "$LEDGER_DB" ]; then
+    python3 -c "
+import sqlite3, sys
+try:
+    with sqlite3.connect('$LEDGER_DB') as cx:
+        n = cx.execute('SELECT COUNT(*) FROM events').fetchone()[0]
+    print(f'[ OK ] ledger.db: {n} event(s)')
+except Exception as e:
+    print(f'[FAIL] ledger.db unreadable: {e}', file=sys.stderr)
+    sys.exit(1)
+" || FAILS=$(( FAILS + 1 ))
+else
+    _warn "ledger.db not initialized at $LEDGER_DB (run setup.sh)"
+fi
+
+# 10. tier-auto
+printf '\n[10] tier-auto\n'
+if [ -f "$HERE/tier-auto" ]; then
+    _ok "tier-auto present"
+else
+    _fail "tier-auto missing from scripts/"
+fi
+if [ -f "$TRITIUM_HOME/state/current_tier" ]; then
+    t="$(cat "$TRITIUM_HOME/state/current_tier")"
+    _ok "Current tier: $t"
+else
+    _ok "current_tier not set (defaults to 0/scout)"
+fi
+
+printf '\n%s\n' "$(printf '+--- Diagnosis complete ')-$(printf '%0.s-' {1..36})+"
+if [ "$FAILS" -eq 0 ]; then
+    printf '[ OK ] All checks passed.\n'
+else
+    printf '[FAIL] %d check(s) failed. Review output above.\n' "$FAILS" >&2
+fi
+exit "$FAILS"

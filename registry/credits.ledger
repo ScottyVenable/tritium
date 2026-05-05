@@ -1,0 +1,24 @@
+# Tritium OS v4.1 -- registry/credits.ledger
+# Append-only AI credit monitoring ledger for 2026 budget cycle.
+# Format (event lines): ISO-8601-datetime | agent | tier | tokens_in | tokens_out | event_kind | note
+# Do NOT edit or delete existing lines. Append only.
+# Secrets and personal identifiers must never appear in this file.
+# See registry/models.json for tier definitions and cost classes.
+
+schema_version: 1.0
+project: tritium-os
+budget_cycle: 2026
+created: 2025-07-21
+
+# --- BUDGET BASELINE (zero-balance placeholder, no real API data) ---
+# agent     | tier | cost_class | budget_tokens | spent_tokens | remaining
+scout        |  T0  | low        |             0 |            0 |         0
+bridge       |  T1  | medium     |             0 |            0 |         0
+sol          |  T2  | high       |             0 |            0 |         0
+vex          |  T2  | high       |             0 |            0 |         0
+jesse        |  T2  | high       |             0 |            0 |         0
+rook         |  T3  | premium    |             0 |            0 |         0
+
+# --- EVENT LOG (append new lines below) ---
+# datetime                   | agent  | tier | t_in | t_out | kind           | note
+# 2025-07-21T00:00:00+00:00 | system |  --  |    0 |     0 | ledger_init    | v4.1 Omni-Refactor baseline

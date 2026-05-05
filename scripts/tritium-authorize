@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Tritium OS v4.1 -- tritium-authorize
+# Renew the shield token (stamps ~/.tritium-os/state/shield.ok with current time).
+# Replace body with real auth logic (passphrase, biometric, etc.) as needed.
+
+set -euo pipefail
+TRITIUM_HOME="${TRITIUM_HOME:-$HOME/.tritium-os}"
+STATE_DIR="$TRITIUM_HOME/state"
+SHIELD="$STATE_DIR/shield.ok"
+mkdir -p "$STATE_DIR"
+printf '%s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" > "$SHIELD"
+printf '[ OK ] Shield renewed: %s\n' "$SHIELD"
+printf '       Valid for 24 hours.\n'

@@ -1,0 +1,115 @@
+{
+  "_comment": "Tritium OS v4.1 -- registry/models.json. Source of truth for tier/model assignments.",
+  "schema_version": "4.1",
+  "snap_back_baseline": "scout",
+  "default_tier": 0,
+  "agents": [
+    {
+      "id": "scout",
+      "name": "Scout",
+      "tier": 0,
+      "model": "gemini-3-flash",
+      "role": "triage",
+      "escalates_to": "bridge",
+      "pre_dispatch": true,
+      "description": "T0 triage officer. Fast reads, safe lookups, and routing. Pre-dispatched by Bridge for all T0-safe requests. Snap-back baseline."
+    },
+    {
+      "id": "bridge",
+      "name": "Bridge",
+      "tier": 1,
+      "model": "gemini-1.5-pro",
+      "role": "coordinator",
+      "escalates_to": null,
+      "pre_dispatch": false,
+      "description": "Team Lead. Coordination and dispatch only. Does not implement code or content. Pre-dispatches T0-safe requests to Scout."
+    },
+    {
+      "id": "sol",
+      "name": "Sol",
+      "tier": 2,
+      "model": "claude-sonnet-4.6",
+      "role": "programmer",
+      "escalates_to": "bridge",
+      "pre_dispatch": false,
+      "description": "Co-Creative Director and Lead Programmer. Source code, CI, PRs, changelog, vault, registry."
+    },
+    {
+      "id": "vex",
+      "name": "Vex",
+      "tier": 2,
+      "model": "claude-sonnet-4.6",
+      "role": "content",
+      "escalates_to": "bridge",
+      "pre_dispatch": false,
+      "description": "Content and Asset Architect. Authored data, lore, wiki reference, personality files."
+    },
+    {
+      "id": "rook",
+      "name": "Rook",
+      "tier": 3,
+      "model": "claude-opus-4.7",
+      "role": "qa_release",
+      "escalates_to": "bridge",
+      "pre_dispatch": false,
+      "description": "QA and Release Engineer. Build verification, CI health, bug reproduction, release readiness."
+    },
+    {
+      "id": "jesse",
+      "name": "Jesse",
+      "tier": 2,
+      "model": "claude-sonnet-4.6",
+      "role": "repository",
+      "escalates_to": "bridge",
+      "pre_dispatch": false,
+      "description": "Repository Manager. GitHub issues, project board, wiki, labels, milestones, release notes."
+    }
+  ],
+  "tiers": {
+    "0": {
+      "label": "Triage",
+      "agents": [
+        "scout"
+      ],
+      "cost_class": "low",
+      "snapback_target": true,
+      "notes": "Default baseline. Auto-selected for fast reads and routing. Snap-back returns here after any higher-tier session."
+    },
+    "1": {
+      "label": "Coordination",
+      "agents": [
+        "bridge"
+      ],
+      "cost_class": "medium",
+      "snapback_target": false,
+      "notes": "Coordination only. Escalate from T0 when multi-domain orchestration is needed."
+    },
+    "2": {
+      "label": "Specialist",
+      "agents": [
+        "sol",
+        "vex",
+        "jesse"
+      ],
+      "cost_class": "high",
+      "snapback_target": false,
+      "notes": "Specialist implementation. Dispatched by Bridge for domain work."
+    },
+    "3": {
+      "label": "Senior",
+      "agents": [
+        "rook"
+      ],
+      "cost_class": "premium",
+      "snapback_target": false,
+      "notes": "Premium QA and release gating. Escalate only for release readiness or critical bug reproduction."
+    }
+  },
+  "tier_auto": {
+    "default": 0,
+    "uncertain_escalation": "bridge",
+    "snap_back_after_task": true,
+    "snap_back_event_kind": "tier_snapback",
+    "open_payload_close_on_snapback": true
+  }
+}

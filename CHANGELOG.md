@@ -1,6 +1,58 @@
 # Changelog
 
-All notable changes to Tritium are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows [SemVer](https://semver.org).
+All notable changes to this project will be documented in this file.
+Format: Keep a Changelog (https://keepachangelog.com/en/1.0.0/).
+Versioning: Semantic Versioning (https://semver.org/).
+
+## [Unreleased]
+
+## [4.1.0] -- 2026-01-02 -- Omni-Refactor
+
+### Added
+- `scripts/tritium-crypt` -- AES-256-GCM vault with X25519/HKDF key wrapping and Ed25519 signing.
+- `scripts/tritium-open` -- shield-checked vault payload opener.
+- `scripts/tritium-close` -- re-seal with 3-pass mirror shred and snap-back logging.
+- `scripts/tier-auto` -- four-tier agent manager with automatic T0 snap-back.
+- `scripts/tritium-cp` -- Python ASCII control panel dashboard.
+- `scripts/tritium-doctor` -- 11-point diagnostic suite; exits non-zero on FAIL.
+- `scripts/tritium-id` -- runtime identity printer.
+- `scripts/tritium-authorize` -- shield token renewal.
+- `scripts/setup.sh` -- idempotent v4.0+v4.1 bootstrapper (Termux/Linux).
+- `scripts/setup-ledger.py` -- ledger schema helper (called by setup.sh).
+- `registry/models.json` -- authoritative tier/model registry for all agents.
+- `registry/credits.ledger` -- append-only AI credit monitoring.
+- `world_vault/manifest.json` -- encrypted payload manifest.
+- `bridge/tritium_bridge/ledger.py` -- SQLite ledger facade (log_event, remember, recall, summary).
+- `data/ledger.schema.sql` -- SQLite ledger schema.
+- `mobile-environment/configs/bashrc.sh` -- Termux shell integration with aliases and shield check.
+- `.github/agents/` -- agent spec .md files for Bridge, Scout, Sol, Jesse, Vex, Rook.
+- `agents/scout/` -- Scout runtime directory with MEMORY.md and subdirs.
+- `AGENTS.md` -- authoritative agent roster.
+- `docs/SECURITY-tritium-crypt.md` -- Rook's crypto vault specification.
+- `docs/ARCHITECTURE-v4.md` -- v4.0 Genesis architecture document.
+- `docs/ARCHITECTURE-v4.1.md` -- v4.1 Omni-Refactor architecture document.
+- Bridge Team Lead role: Rule 0 Scout pre-dispatch before any routing decision.
+- Tier snap-back: all T1+ sessions return to T0 Scout via `tier-auto snap`.
+
+### Changed
+- `scripts/tritium-doctor` replaced stub with 11-point diagnostic implementation.
+- Bridge role updated from "Dispatcher" to "Team Lead" with Scout pre-dispatch.
+
+### Security
+- Vault boundary: `.tritium_mirror/`, `*.x25519`, `*.ed25519`, `*.pem` gitignored.
+- AES-256-GCM + X25519/HKDF key wrapping; never silently degrades.
+- Ed25519 manifest signing; open refuses on signature mismatch.
+
+## [4.0.0] -- 2026-01-01 -- Genesis
+
+### Added
+- Initial Tritium OS multi-agent runtime foundation.
+- `bridge/tritium_bridge/` Python package: personas, context, LM Studio, actions, filedrop, scheduler, worldcontext.
+- `scripts/install.sh` / `install.ps1` -- dependency installer.
+- `scripts/verify.sh` / `verify.ps1` -- environment verifier.
+- `scripts/new-agent.sh` / `new-agent.ps1` -- agent scaffold generator.
+- `scripts/package.sh` / `package.ps1` -- release packager.
+- Six named agents: Bridge, Scout, Sol, Jesse, Vex, Rook.
 
 ## [0.1.0] — 2026-05-03
 

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Tritium OS v4.1 -- tritium-id
+# Print identity of current runtime: agent, tier, repo, version.
+
+set -euo pipefail
+TRITIUM_HOME="${TRITIUM_HOME:-$HOME/.tritium-os}"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$HERE/.." && pwd)"
+TIER_FILE="$TRITIUM_HOME/state/current_tier"
+tier="$([ -f "$TIER_FILE" ] && cat "$TIER_FILE" || echo 0)"
+agents=("scout" "bridge" "sol" "rook")
+agent="${agents[$tier]:-unknown}"
+sha="$(git -C "$REPO_ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+branch="$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+printf 'Tritium OS v4.1\n'
+printf '  Agent   : %s\n' "$agent"
+printf '  Tier    : %s\n' "$tier"
+printf '  Branch  : %s\n' "$branch"
+printf '  HEAD    : %s\n' "$sha"
+printf '  Repo    : %s\n' "$REPO_ROOT"
+printf '  Home    : %s\n' "$TRITIUM_HOME"
