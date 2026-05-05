@@ -14,6 +14,9 @@ node_modules/
 # Local SETTINGS overrides (the example file IS committed)
 SETTINGS.jsonc
 
+# Agent environment secrets — NEVER commit credentials
+world/[4]_bridge_/.env
+**/.env
 # -- Tritium OS v4.1 crypt boundary (DO NOT REMOVE) ----------------------
 .tritium_mirror/
 world_vault/*.plain

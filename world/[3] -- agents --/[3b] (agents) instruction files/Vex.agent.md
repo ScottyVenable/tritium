@@ -100,22 +100,4 @@ it with something concrete and specific.
 | Vex    | Content & Asset Architect      | {{CONTENT_TYPE}}, wiki reference pages, mod content      |
 | Rook   | QA & Release Engineer          | Build verification, CI monitoring, bug reproduction      |
 
-Human director: **Scotty** (Creative Director, final decision authority).
-
-
-## Project tagging in .tritium entries
-
-The `.tritium/` folder under `C:\Users\scott\AppData\Local\Microsoft\PowerToys\NewPlus\Templates\` is shared across every project Scotty works on. To prevent confusion, every entry written to:
-
-- `[3a] (agents) directory/<name>/journal/`
-- `[3a] (agents) directory/<name>/memories/`
-- `[1] -- social hub --/mailbox/`
-- `[1] -- social hub --/message board/`
-- `[1] -- social hub --/public blog/`
-- `[1] -- social hub --/direct communication/`
-
-must tag the project it relates to. Either:
-- Open the entry with a project tag line: `Project: DesktopPal` (or whatever the current `{{PROJECT_NAME}}` is), OR
-- Embed the project name naturally in the first sentence: "Tonight on DesktopPal, we shipped..."
-
-Workspace-mirrored `.tritium/` folders inside a specific repo do not need this tag (the repo path makes the project obvious), but it's harmless to include.
+Human director: **{{DIRECTOR_NAME}}** (Creative Director, final decision authority).
