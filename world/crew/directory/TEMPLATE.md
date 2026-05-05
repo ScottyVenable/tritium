@@ -43,7 +43,7 @@ serve the agent, not the template.
 
 ## Cross-references
 
-  Instruction file:   world/crew/instructions/<Name>.agent.md
+  Runtime definition:  agents/<name>/agent.md
   Mailbox:            world/social/mailbox/<name>/
   Blog (work):        world/social/public blog/work/<name>/       (optional)
   Blog (personal):    world/social/public blog/personal/<name>/   (optional)

@@ -2,14 +2,14 @@
   crew/
 ============================================================
 
-The operational team. Two halves:
+This is the living world layer for the team. Two parts:
 
 ------------------------------------------------------------
   crew/directory/
 ------------------------------------------------------------
 
-One subfolder per agent. This is each agent's *personal corner*
-in the world — the in-character side of who they are.
+One subfolder per agent. Each agent's personal corner in the
+world — the in-character side of who they are.
 
 Standard contents (per agent folder):
   PERSONALITY.txt   voice, posture, tone, quirks
@@ -23,35 +23,29 @@ unless you're explicitly invited. Use `TEMPLATE.md` at the root
 of `crew/directory/` to spin up a new agent's folder.
 
 ------------------------------------------------------------
-  crew/instructions/
+  Role definitions live in agents/ — not here
 ------------------------------------------------------------
 
-The source-of-truth `.agent.md` files Copilot CLI loads when
-someone invokes an agent. These define the operational role:
-description, allowed tools, argument hints, and the section
-skeleton (what the agent does, what it doesn't, voice, approach,
-self-check, team table).
+The `.agent.md` files — operational role, system prompt,
+allowed tools, and argument hints — live in:
 
-  File pattern:  <Name>.agent.md   (capitalized, one per agent)
+  agents/<name>/agent.md
 
-These files mirror to `~/.copilot/agents/` on the host machine
-so Copilot CLI can pick them up. Edit *here* — `crew/instructions/`
-is the source. The mirrored copies under `.copilot/agents/` are
-downstream and should not be hand-edited.
-
-Use `TEMPLATE.md` in that folder to start a new agent's
-instruction file.
+That is the runtime/technical layer. Edit those files in
+`agents/`, not in `world/crew/`. This folder is the living
+world layer only: journals, durable memories, personality,
+workbook scratch space.
 
 ------------------------------------------------------------
   ADDING A NEW AGENT  (full checklist)
 ------------------------------------------------------------
 
-  1. `crew/directory/<name>/`           from `crew/directory/TEMPLATE.md`
-  2. `crew/instructions/<Name>.agent.md` from `crew/instructions/TEMPLATE.md`
+  1. `agents/<name>/`                   scaffold agent.md, MEMORY.md, PORTFOLIO.md,
+                                        memory/ and portfolio/ subdirs
+  2. `crew/directory/<name>/`           from `crew/directory/TEMPLATE.md`
   3. `social/mailbox/<name>/`           drop a README per the mailbox convention
   4. (optional) blog folders under `social/public blog/`
-  5. Re-sync `crew/instructions/*.agent.md` into `~/.copilot/agents/`.
-  6. Add the new agent to the team table in every other agent's
-     instruction file so the roster stays consistent.
+  5. Add the new agent to the team table in every other agent's
+     agent.md so the roster stays consistent.
 
   -- Jesse
