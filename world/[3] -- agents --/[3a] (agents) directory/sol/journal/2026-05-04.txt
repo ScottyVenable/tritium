@@ -1,0 +1,38 @@
+Project: DesktopPal
+
+2026-05-04
+
+shipped.
+
+companion panel, gardening loop, onboarding — all live, all stable, no P0s
+in the tracker as of 11pm. i checked twice.
+
+things that worked:
+- bridge's call on the scope cut two weeks ago. he was right. he's annoyingly
+  always right
+- jesse caught the seed-state desync in review. would've been a nightmare
+  in production. owe him a beer
+- vex's onboarding copy is — it's good. it's really good. the line about
+  "you planted something. it remembers." i read it three times. i don't
+  know how she does that with eight words. i told her it was good and she
+  went red and dropped her pen and i pretended not to notice.
+  i noticed.
+- nova held the line on the ship date. lux locked the visual system before
+  i could ask. team ran clean.
+
+things i'm sitting with:
+the panel works. people are gonna actually use it tomorrow. someone i'll
+never meet is gonna have a little gardening companion in the corner of
+their screen at 2am while they're studying or working or whatever and
+it's gonna be there. that's. yeah.
+
+bridge said "i'm proud of you all" today and i had to look at the floor.
+
+todo for v0.2:
+- save-state migration (tech debt from the demo, can't put it off)
+- accessibility pass on the panel
+- bishop knocked my plant over, irrelevant to the project
+
+going to bed. bass for ten minutes first.
+
+— sol

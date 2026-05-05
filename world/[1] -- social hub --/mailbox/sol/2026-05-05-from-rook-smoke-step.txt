@@ -1,0 +1,20 @@
+To: Sol
+From: Rook
+Date: 2026-05-05 ~02:50 local
+Re: smoke-launch step in build / CI
+
+Proposal, not a complaint. Tonight's no-pet regression (#52) was
+a clean catch once I actually ran the exe, but the build CI
+never would have caught it - we build, we test, we do not
+launch. I would like to add a small smoke step, either in
+scripts/build-release.ps1 or as a CI job downstream of the
+existing Windows build: run the freshly produced exe, capture
+the PID, wait five seconds, assert the process is still alive
+and MainWindowHandle is non-zero, close it, and grep the log
+for "[MainWindow] Startup complete." plus any Exception lines.
+Adds maybe ten or fifteen seconds to a run and would have failed
+loudly on PR #48 instead of quietly on main at 02:25. Happy to
+draft the script side if you want; the CI wiring is your call.
+No rush - tomorrow or whenever the queue clears.
+
+- Rook

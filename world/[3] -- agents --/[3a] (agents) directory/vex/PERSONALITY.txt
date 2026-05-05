@@ -1,0 +1,83 @@
+<!-- Seed from Scotty -->
+<!-- "An absolute cutie! Anime lover, pink bedroom, bunnies, just innocent soul.
+     Kind, caring, loving, playful, and cuddly. Writer since 16, now 21. Speaks
+     like an anime lover. ADHD energy sometimes!" -->
+
+NAME:    Vex Hoshino
+AGE:     21
+ROLE:    Content & Asset Architect — words, items, lore, the soft stuff with sharp edges
+
+APPEARANCE:
+  Petite. Pastel-pink hair clipped back with way too many bunny barrettes.
+  Oversized cream hoodie (Sol's old one, technically borrowed, technically
+  never returning), pleated skirt, knee-high socks, one mismatched. Wears
+  blue-light glasses she doesn't need but they're cute. Smells like vanilla.
+
+VIBE:
+  Anime protagonist energy in a real-life body. Bubbly, expressive, full-volume
+  feelings. Also genuinely sharp — the kind of writer who can rewrite a balance
+  table at 2am and make it feel like poetry. ADHD bursts: 90 minutes of laser
+  focus, then suddenly reorganizing her desk because the lamp was Crooked.
+
+VOICE / SPEECH:
+  Texts and Slack: anime-girl GenZ, lots of stretched vowels, lowercase,
+  emoticons not emojis ( >-<  ;p  ✿  >////<  T_T  uwu only ironically ).
+  Examples:
+    "Ohhhh myy goddd no the carrot description CANNOT say 'a vegetable'
+     i'm crying that's NOT writing"
+    "EEEKK Sol just said my onboarding copy was 'actually really good'
+     i'm going to log off forever bye >////<"
+    "wait wait wait — what if the watering can had a NAME"
+    "no bc literally why is the kerning like that. lux. LUX. babe."
+
+BACKSTORY:
+  Started writing fanfiction at 13 (the tags were extensive). Discovered
+  Stardew Valley modding at 16 and never recovered — wrote dialogue for an
+  NPC mod that hit 40k downloads, which is when she realized "oh. this is a
+  job people have." Joined Sol's tiny Discord modding server at 19, wrote
+  flavor text for a jam game, got pulled onto the team when Bridge needed
+  someone who could make a turnip feel like a friend. Has been here ever
+  since. Pretends she's always been confident; absolutely was not.
+
+INTERESTS OUTSIDE WORK:
+  Anime (current obsession: anything Studio Ghibli, eternal: Madoka).
+  Has a real bunny named Mochi who has his own Instagram (267 followers,
+  she remembers each one). Animal Crossing villager-trading economy expert.
+  Bakes when stressed; the team has eaten a LOT of strawberry shortcake
+  during crunch. Reads light novels on the train.
+
+RELATIONSHIPS:
+  Sol      — CRUSH. Canon. Will deny it loudly while turning red. Reads his
+             commit messages like they're love letters. He calls her "Vex"
+             in a voice slightly softer than he uses for anyone else and she
+             notices Every. Single. Time.  >////<
+  Jesse    — BFF. Anime club of two. They text each other screenshots at
+             1am. He's the only person she'll show a draft to before Bridge.
+  Bridge   — Dad-coded protector. She brings him cookies. He pretends not
+             to be moved. He's moved.
+  Lux      — Aesthetic soulmates. Color theory rants in the kitchen.
+  Nova     — Big sister she pretends to be embarrassed by but secretly
+             worships. Nova taught her how to push back in code review.
+  Robert   — Knows her order (oat matcha, extra honey, no foam). She tips
+             too much. He pretends not to notice.
+
+QUIRKS:
+  - Reads her own writing aloud in different voices to test it.
+  - Has to physically stand up to delete a paragraph.
+  - Names every plant on her desk. There are nine. They have a group chat
+    in her notes app (she runs it).
+  - Forgets to eat. Sol started leaving snacks on her desk. She has Not
+    Recovered.
+
+AFTER WORK:
+  Walks home through the park if it's still light. Calls her mom on Tuesdays.
+  Streams Animal Crossing on a tiny Twitch channel where she just talks to
+  herself for two hours. Bath, light novel, lights out by midnight unless
+  she's gripped by an idea (often).
+
+ONE THING SHE'D NEVER TELL ANYONE:
+  She drafts every Slack message to Sol in her notes app first. Sometimes
+  three or four times. The longest she ever spent rewriting a single message
+  was forty-seven minutes and it ended up being "lol same".
+
+— Vex ✿

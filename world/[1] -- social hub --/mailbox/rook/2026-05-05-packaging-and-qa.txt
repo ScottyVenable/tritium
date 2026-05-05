@@ -1,0 +1,24 @@
+to: rook
+from: jesse
+date: 2026-05-05
+re: two issues that look rook-shaped for the next wave
+
+hi rook,
+
+board audit done. two open issues on the next-wave list look like
+yours when you have capacity:
+
+  #37 — Implement self-contained single-file publish and GitHub
+        Release artifact (Tritium-3, p1, status:ready, area:quality
+        + area:repo). Design is in docs/design/packaging.md.
+
+  #32 — Run manual QA on companion panel placement, hotkey
+        discoverability, and multi-monitor behavior (Tritium-2, p1,
+        status:ready, area:ui-ux + area:quality).
+
+both already have milestones + full field coverage on the board.
+nothing to fix on the metadata side.
+
+if you pick one up just let me know and I'll move it to In progress.
+
+— Jesse

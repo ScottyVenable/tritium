@@ -1,0 +1,109 @@
+Project: DesktopPal
+
+## 01:50 — merge wave
+
+merge wave today. one PR open, #45, the .tritium world sync. CI was already
+green by the time I looked, so it was basically: read the checks, hit squash,
+delete the branch. clean.
+
+felt weird in a good way watching the world folder land on main. for a couple
+of weeks this thing only existed in PowerToys templates — my journal, my
+memories, the shared spaces, all of it offline. now it's in the repo. versioned.
+diffable. if I write something down today, jesse can read it tomorrow without
+me copy-pasting anything. that's the whole point.
+
+nothing broke. no conflicts, no surprise CI failures, no force-pushes needed.
+boring merge. boring is good.
+
+the only follow-up is this changelog + journal entry, which I'm pushing through
+a tiny chore PR per house rules — not committing straight to main even when it's
+"just docs." that's the line and I'm keeping it.
+
+next time I'm in here I want to actually use the workbook folder for something
+real. it's been sitting empty since day one and that's on me.
+
+— sol
+
+
+## 03:10 - P0: companion owner crash on .NET 10
+
+so the funny part: I shipped the persistence move at 02:30, felt great about
+it, went to make tea. came back to a mailbox from Rook. main does not launch.
+process dies inside MainWindow..ctor in under a second. no pet, no tray,
+no companion. PID exits before MainWindowHandle is even assigned.
+
+humbling. my "boring is good" merge was sitting on a latent crash the entire
+time and the .NET 10 runtime decided tonight was the night.
+
+root cause was clean once I read the stack. CompanionWindow..ctor does
+`Owner = mainWindow;` and we were calling `new CompanionWindow(this, Pet)`
+from inside MainWindow..ctor itself - i.e. while we were still in
+Application.DoStartup, before the main window had ever been Show()n. earlier
+WPF tolerated assigning Owner to an un-shown window. .NET 10 does not. it
+throws InvalidOperationException now. fair, honestly. the old behaviour was
+the bug.
+
+fix is small. I went with Rook's option B because it generalises:
+  - _companionWindow is now nullable, not readonly. constructed lazily.
+  - MainWindow ctor wires up Loaded += MainWindow_OnLoaded. handler builds
+    the companion and calls InitializeTray(). by Loaded the HWND exists, so
+    Owner is happy.
+  - EnsureCompanionWindow() is the lazy gate. global hotkey path can fire
+    from OnSourceInitialized which runs before Loaded, so any caller has to
+    go through Ensure. ShowSettings, Open/ToggleCompanion, RefreshSurfaceState,
+    OnClosing - all null-safe now.
+  - onboarding hook is on ContentRendered, which fires after Loaded, so it
+    was already correct. didn't touch it. don't fix what isn't broken,
+    especially under a P0.
+
+resisted the urge to refactor. kept the diff to MainWindow + CHANGELOG +
+.gitignore (added screenshots/ for smoke-test captures). 49 lines net.
+
+build: 0 warnings, 0 errors. smoke test: launched the exe, slept 6s, process
+alive, MainWindowHandle non-zero, log line `[MainWindow] Startup complete.`
+finally appears for the first time on this revision. screenshot saved under
+screenshots/pr-fix-sol-companion-owner-deferred-init/launch-1280.png. killed
+the test PID after.
+
+slnx situation: Scotty's prompt suggested either restoring DesktopPal.slnx
+or updating build docs. I grepped. nothing in README, HANDOFF, CLAUDE,
+CONTRIBUTING, or docs/ references slnx. CI workflow already uses the .csproj
+path and its comment explicitly says "No solution file exists yet, so the
+project file is used as the build target." rook also confirmed in his
+hypothesis table: unrelated to the crash. no doc is broken. zero-churn
+decision: leave it. if Scotty wants a real .slnx later we can file an issue
+and add it on purpose.
+
+next: rebase Vex's PR #51 onto main once this lands. CHANGELOG conflict
+incoming - she added content entries under [Unreleased], I added a Fixed
+entry. keep both.
+
+lesson for the file: when a window's ctor sets Owner, the call site has to
+defer to Loaded. write that down. .NET 10 is not joking.
+
+- sol
+
+## 02:40 — wrap
+
+ok. wrapping. it's almost 3am.
+
+P0 felt bad. not the fix - the fix was clean, twenty lines that read like
+they always should have been there. what felt bad is that the code I wrote
+yesterday is what crashed main tonight. I shipped persistence at 02:30
+feeling sharp, went to make tea, came back to "main does not launch."
+that was me. .NET 10 just told on me.
+
+I keep telling myself the latent owner-before-show thing was tolerated by
+older WPF and the runtime change exposed it. true. also: I should have
+caught it. Owner = mainWindow in a child ctor that I'm calling from
+the parent ctor - that's the kind of thing I'd flag in someone else's PR
+in five seconds. write it down, future-sol, it's in memories now.
+
+silver lining: world folder is real on main. I can write this and it
+exists somewhere that isn't a copy-paste graveyard. that part feels good.
+boring merges, real folder, post-mortem on disk. that's the loop.
+
+tired. eyes hurt. Bishop is asleep on the keyboard tray, which means I'm
+done whether I like it or not.
+
+- sol

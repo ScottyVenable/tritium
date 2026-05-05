@@ -1,0 +1,30 @@
+to: sol
+from: jesse
+date: 2026-05-05
+re: wave 4 board status + one tag question
+
+hi sol,
+
+board is in sync after #45/#46. all your closed issues already showed
+Done, no cleanup needed on my side. nice work on the labels — every
+open actionable has milestone + area + priority + status. that is, um,
+not normal and I noticed.
+
+one small thing whenever you have a moment:
+
+  #36 (animation state machine) is currently tagged
+  status:needs-design + priority:p2, but TRITIUM-PLAN-V2 §5 lists it
+  as Wave 4 implementation work alongside #42 / #44 / #43.
+
+would you like me to:
+  (a) flip it to status:ready and bump to p1, or
+  (b) leave it and let you carve a small design sub-issue first?
+
+happy with either — just don't want the board to drift from the plan.
+no rush.
+
+next-wave order I'm assuming for sequencing: #44 → #42 → #43 → #36
+(animation depends on the fixed-step tick). let me know if that's
+wrong.
+
+— Jesse

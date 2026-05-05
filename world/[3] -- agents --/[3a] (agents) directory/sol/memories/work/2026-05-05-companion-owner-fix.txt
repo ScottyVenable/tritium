@@ -1,0 +1,62 @@
+Project: DesktopPal
+
+TITLE:  Companion window owner deferral fix (issue #52)
+DATE:   2026-05-05
+TYPE:   post-mortem / pattern note
+TAGS:   wpf, dotnet-10, startup, owner, companionwindow, p0
+
+CONTEXT
+  main (a4099fd) did not launch on .NET 10. Process exited inside
+  MainWindow..ctor. No window, no tray, no log line past
+  SystemIntegration.WatchDesktop. P0, blocked every workstation.
+
+ROOT CAUSE
+  MainWindow..ctor instantiated CompanionWindow with `this` as the owner.
+  CompanionWindow..ctor sets Owner = mainWindow on its first line. .NET 10
+  WPF tightened Window.Owner validation: the owner must have an HWND
+  (must have been Show()n) before assignment, otherwise it throws
+  InvalidOperationException("Cannot set Owner property to a Window that
+  has not been shown previously.").
+  At the call site we were still inside Application.DoStartup; MainWindow
+  had not been shown yet. Earlier WPF tolerated this. .NET 10 does not.
+  Latent bug, runtime made it real.
+
+FIX (committed in fix/sol-companion-owner-deferred-init)
+  - _companionWindow: readonly -> nullable, built lazily.
+  - MainWindow ctor subscribes Loaded += MainWindow_OnLoaded. Loaded handler
+    constructs the companion and calls InitializeTray(). By Loaded the HWND
+    exists so Owner assignment is legal.
+  - Added EnsureCompanionWindow() helper. All call sites that may run before
+    Loaded (global hotkey via OnSourceInitialized, Toggle/Open from tray
+    if it ever leaks earlier, etc.) go through Ensure.
+  - Null-safed: ShowSettings, RefreshSurfaceState, OnClosing.
+  - InitializeTray also deferred for the same generalised reason - matches
+    the deferred-startup pattern onboarding already uses (ContentRendered).
+  - Did NOT touch onboarding (already deferred via ContentRendered).
+  - Diff scoped to MainWindow.xaml.cs + CHANGELOG + .gitignore (screenshots/).
+
+VERIFICATION
+  - dotnet build DesktopPal\DesktopPal.csproj -p:EnableWindowsTargeting=true:
+    0 warnings, 0 errors.
+  - Start-Process the exe, Start-Sleep 6, Get-Process: alive,
+    MainWindowHandle non-zero, "[MainWindow] Startup complete." in log.
+
+PATTERN / LESSON (write this down)
+  Any Window subclass whose ctor sets Owner = parent forces the call site
+  to defer construction to a post-Show() event (Loaded preferred). On .NET
+  10 there is no longer a forgiving path. Audit every `new XWindow(this,...)`
+  in a parent ctor before any future window is added. If the child sets
+  Owner inside its ctor, the parent ctor cannot construct it.
+
+NON-FIX DECISIONS
+  - DesktopPal.slnx: not recreated. No build doc, README, HANDOFF, CLAUDE,
+    CONTRIBUTING, docs/, or CI workflow references it. CI uses csproj path
+    and its comment is already accurate. Zero churn.
+  - Did not refactor InitializeTray, did not touch onboarding, did not
+    expand error logging. P0 fix only.
+
+FOLLOW-UP
+  - Rebase Vex's PR #51 onto main once #52 fix lands. CHANGELOG conflict
+    expected; keep both her content entries and this Fixed entry.
+
+- Sol

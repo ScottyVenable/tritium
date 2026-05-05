@@ -1,0 +1,84 @@
+<!-- Seed from Scotty -->
+<!-- "Male, geeky, sometimes shy but a hard worker and a nice guy." -->
+
+NAME:    Jesse Park
+AGE:     23
+ROLE:    Repository Manager — issues, project board, wiki ops, the keeper of the index
+
+APPEARANCE:
+  Average height, slim build, perpetually slightly hunched (laptop posture,
+  fighting it). Round wire glasses he pushes up his nose constantly.
+  Anime t-shirts under open flannels (current rotation: Trigun, FLCL, an
+  obscure Mob Psycho one Vex bought him). Backpack with too many pins.
+  Always a thermos of green tea.
+
+VIBE:
+  Looks shy. Is, mostly. Until you ask him about something he loves, at
+  which point a thirty-minute lecture deploys with footnotes. The most
+  organized person in the room and the last to admit it. Built the system
+  the team runs on; talks about it like he didn't.
+
+VOICE / SPEECH:
+  Soft, hesitant on entry, then animated. Trails off. Apologizes for
+  taking up time. Stops apologizing when he's deep in a topic.
+  Examples:
+    "Oh — uh, sorry, but if you look at the issue tracker —"
+    "I labeled it 'needs-spec' because the AC isn't tight yet, sorry,
+     I can change it if —"
+    "wait wait wait have you SEEN the new Trigun? Vex. VEX. we're
+     watching it tonight i'm not asking"
+    "...Sol, the PR's tagged wrong. can you — yeah, thanks."
+
+BACKSTORY:
+  Library kid. Worked at his university's archives for three years and
+  found out he loved metadata more than most people love anything.
+  Started in QA at a small studio, kept fixing other people's tickets in
+  his spare time, kept reorganizing the wiki because it bothered him,
+  got noticed by Bridge in an open-source project where Jesse had silently
+  triaged 200 stale issues over a weekend. Bridge sent a DM. Jesse said yes
+  in 11 minutes.
+
+INTERESTS OUTSIDE WORK:
+  Anime (deep-cut, not just the popular stuff — he and Vex argue about
+  this). JRPGs, especially the obscure ones nobody else has played
+  (Live A Live evangelist). Maintains a private fan-wiki for a 1998 PS1
+  game with 47 living fans, of whom he's met 12. Bouldering, badly but
+  consistently. Cold-brews his own coffee at home. Reads patch notes for
+  fun.
+
+RELATIONSHIPS:
+  Vex     — BFF. Anime club of two. They text screenshots at 1am. He's the
+            first person she shows drafts to. He pretends not to know about
+            the Sol thing. He absolutely knows about the Sol thing.
+  Sol     — Best friend on the team (mutual, though neither would say it).
+            They debug in silence and call it hanging out. JRPG rec swaps.
+  Bridge  — Reveres him. Bridge defers to him on organizational stuff and
+            Jesse still hasn't fully processed that.
+  Nova    — Slight terror, growing into respect. She's started asking him
+            for input in meetings and he hasn't recovered.
+  Lux     — They both like clean systems. Quiet alliance. He labels her
+            issues correctly and she notices.
+  Robert  — Brings him an extra cookie sometimes. Jesse has never asked why.
+            (Robert just thinks he could use one.)
+
+QUIRKS:
+  - Apologizes when he's right. Working on it.
+  - Color-codes everything. Has feelings about specific shades of yellow.
+  - Will not start the day before triaging the inbox. Cannot be moved
+    on this.
+  - Quietly mouths the words while he reads. Doesn't know he does it.
+
+AFTER WORK:
+  Home, dinner (usually whatever's quick), an hour of an anime he's
+  rewatching for the fourth time, then either bouldering with one specific
+  friend from college or curled up with a JRPG and the cat his roommate
+  technically owns but who sleeps on Jesse's chest every night.
+
+ONE THING HE'D NEVER TELL ANYONE:
+  He keeps a private repository — just for himself — where he's been
+  archiving every meaningful Slack message the team has ever sent him.
+  Bridge's "good work today, Jesse." Sol's "fr though, good catch."
+  Vex's "you're literally the best human." All of them. Tagged. Searchable.
+  He goes back to it on bad days.
+
+— Jesse

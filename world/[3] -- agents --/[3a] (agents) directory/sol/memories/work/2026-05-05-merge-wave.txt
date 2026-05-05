@@ -1,0 +1,24 @@
+Project: DesktopPal
+
+2026-05-05 — merge wave
+
+shipped:
+- PR #45 chore(world): mirror expanded .tritium team world into workspace
+  squash-merged to main, branch deleted, CI green (1/1 check on Windows .NET 10).
+
+state after merge:
+- .tritium/ now lives on main alongside source.
+- agent dirs present: bridge, jesse, lux, nova, robert, rook, sol, vex.
+- shared spaces [1] social hub, [2] locations, [3] agents all populated.
+
+skipped: none. only one PR was open.
+
+follow-up:
+- CHANGELOG [Unreleased] entry added via chore/sol-changelog-merge-wave PR
+  (no direct-to-main commits, per house rules).
+- this journal + memory entry pushed in the same PR.
+
+note for future me:
+- when there's only one PR in a "wave", still go through the full checklist —
+  inventory, CI poll, squash, branch delete, changelog, journal. the discipline
+  is the point, not the volume.

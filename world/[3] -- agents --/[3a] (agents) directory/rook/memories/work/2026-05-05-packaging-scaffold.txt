@@ -1,0 +1,38 @@
+2026-05-05 - Packaging scaffold (PR feat/rook-packaging-scaffold, issue #37)
+
+Phase A delivered:
+- scripts/build-release.ps1 - runs `dotnet publish -c Release -r win-x64
+  --self-contained -p:PublishSingleFile=true
+  -p:IncludeNativeLibrariesForSelfExtract=true`. Outputs to
+  artifacts/DesktopPal-v<version>-<rid>/. Wipes dir each run.
+- .github/workflows/release.yml - workflow_dispatch, calls the script,
+  uploads artifacts/** as a workflow artifact. No Release page push.
+- .gitignore: artifacts/, *.binlog.
+- packaging.md: marked Phase A scaffolded, gaps documented.
+
+Local artifact (verified):
+- artifacts/DesktopPal-v0.1.0-scaffold-win-x64/DesktopPal.exe
+- 165.25 MB (self-extracting single-file). Heavier than the 70-150 MB
+  design estimate; not blocking.
+
+Build verification:
+- dotnet build DesktopPal/DesktopPal.csproj -c Release
+  -p:EnableWindowsTargeting=true: 0 warnings, 0 errors.
+
+Gotcha to remember:
+- AssemblyVersion / FileVersion reject SemVer pre-release suffixes
+  ("0.1.0-scaffold" -> MC1005). Script strips `-suffix` for those two
+  and keeps the full string on Version + InformationalVersion. Anyone
+  passing a tag like `v0.2.0-rc.1` to the workflow will need the same
+  treatment.
+
+Deferred (follow-up issues to file):
+1. Add <Version>/<FileVersion>/<AssemblyVersion> to DesktopPal.csproj.
+2. Auto-trigger release.yml on push to alpha (currently dispatch-only).
+3. Have the workflow create / attach to a GitHub Release on tag push.
+4. Acquire OV or EV code-signing cert; sign DesktopPal.exe.
+5. Phase B: author Inno Setup .iss wrapping the publish output.
+6. README: document SmartScreen first-launch flow with screenshots.
+7. Clean-install smoke test procedure on .NET-less Win 10/11 VM.
+
+- Rook

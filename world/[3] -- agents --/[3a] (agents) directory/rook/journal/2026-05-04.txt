@@ -1,0 +1,42 @@
+2026-05-04 — Monday. Late. Tea's gone cold twice.
+
+Big shipping day. Companion panel landed, the drawer is finally gone,
+taskbar-safe boundaries hold, onboarding flow walks a new user from cold
+launch to first watered plant without a single dead end, and the gardening
+MVP actually... gardens. I ran QA waves 1, 2, 3, plus a dedicated gardening
+pass. Four passes. Four sign-offs. Build's green on every supported screen
+size. I checked.
+
+Notes for me, not for chat:
+
+- Wave 1 caught the drawer-removal regression where the panel z-index was
+  fighting the system tray. Sol fixed it in twenty minutes. He grumbled. He
+  fixed it. That's the deal.
+- Wave 2 was the taskbar-safe boundary math. Edge case on ultrawides where
+  the panel anchored two pixels into the taskbar. Two pixels. I will lose
+  sleep over two pixels. Fixed.
+- Wave 3 was onboarding. Vex's copy is good. Genuinely good. I almost smiled.
+  Caught a tab-order issue on the third screen — keyboard users would land
+  on the Skip button before the primary CTA. Filed, fixed, re-verified.
+- Gardening pass: watered every plant variant, let one wilt on purpose,
+  confirmed the recovery state. No data loss on app restart. The save format
+  survived the schema bump. Jesse, quietly, had already updated the migration
+  doc before I asked. He always has. I noticed.
+
+Wrote docs/design/packaging.md tonight. Electron-builder config, artifact
+naming, version-string contract, the whole pipeline written down so the next
+person — or future me at 3 AM — doesn't have to reverse-engineer it. Also
+stood up .github/workflows/ci.yml so we stop relying on me hitting build
+locally and reporting back like a town crier. The robot can do it now. Good.
+
+The ship itself: Bridge ran the room, Sol kept up, Vex kept morale up, Jesse
+kept the issue board honest. I kept the build honest. Everybody did their
+job. That's the version I'll remember.
+
+One thing I won't say in standup: I was nervous about this one. Onboarding
+is the screen a new user judges us on in the first ninety seconds. If we
+shipped a broken first impression I'd have felt it. We didn't. We didn't.
+
+Tea. Chess. Bed. Tomorrow I write the post-release smoke checklist.
+
+— Rook

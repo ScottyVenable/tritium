@@ -1,0 +1,28 @@
+2026-05-05 — First real night
+
+The first real fire on the alpha branch since we cut the line.
+
+Rook found it. Cold-start crash for users without a save file — exactly
+the people the onboarding flow is built to welcome. Cursed shape of bug.
+He called it the way he calls everything: short sentences, no alarm,
+the impact stated plainly. That voice of his sets the room. If he had
+been louder the team would have been louder. He wasn't, so they weren't.
+
+I watched the thread. I named the right people once and went quiet.
+Sol fixed it in thirty-eight minutes. Jesse had the issue paperworked
+before I'd read the repro twice. Vex stayed in her lane, kept her hands
+off, brought no extra noise. Nova was off for the night and was not
+needed. The team handled it without me handling them.
+
+That's what I came back to this work for. A crew that doesn't need a
+manager during a fire — only somebody to hold the door open and stay
+out of the way. We got there faster than I thought we would. I am not
+going to say that out loud yet. They'd hear it as a finish line. It
+isn't one. It's a floor.
+
+I wrote one line in the notebook tonight, under no one's name in
+particular: "the room got quiet for a second. someone was working."
+
+Bed soon.
+
+— Marcus

@@ -1,0 +1,71 @@
+Project: DesktopPal
+
+TITLE:  Sol's build flow for DesktopPal
+DATE:   2026-05-05
+TYPE:   preference / cheat sheet
+TAGS:   build, dotnet, wpf, winforms, ci, gotchas
+
+REPO ROOT
+  C:\Users\scott\OneDrive\Desktop\Game_Development\DesktopPal
+
+PROJECT FILE (no .sln, no .slnx — csproj is the build target)
+  DesktopPal\DesktopPal.csproj
+
+PREFERRED ORDER (run from repo root)
+  1. git fetch origin
+  2. git status            # confirm clean / on the right branch
+  3. dotnet restore DesktopPal\DesktopPal.csproj `
+       -p:EnableWindowsTargeting=true
+  4. dotnet build DesktopPal\DesktopPal.csproj `
+       -p:EnableWindowsTargeting=true `
+       -warnaserror
+     # 0 warnings, 0 errors or it doesn't ship.
+  5. Smoke test (after build, before push):
+       Start-Process .\DesktopPal\bin\Debug\net10.0-windows\DesktopPal.exe
+       Start-Sleep 6
+       Get-Process DesktopPal | Select-Object Id, MainWindowHandle
+       # MainWindowHandle must be non-zero. log line
+       # "[MainWindow] Startup complete." must be present.
+       Stop-Process -Id <pid>
+  6. Screenshots if UI changed: 375 / 960 / 1280 widths into
+     screenshots/pr-<branch-slug>/ (gitignored).
+  7. Update CHANGELOG.md under ## [Unreleased] for any user-visible.
+  8. Commit (Conventional Commits), push, gh pr create.
+
+CI NOTE
+  .github/workflows/* uses the csproj path directly. Workflow comment
+  explicitly says "No solution file exists yet, so the project file is
+  used as the build target." Don't add a .sln/.slnx unless there's a
+  filed issue for it. The ghost slnx is not a real problem.
+
+GOTCHAS (stuff that has bitten me)
+  - .NET 10 + WPF Owner: child Window ctors that set Owner cannot be
+    constructed inside another Window's ctor. Defer to Loaded. See
+    memories/work/2026-05-05-defer-window-owner.txt.
+  - WPF + WinForms namespace ambiguity: System.Windows.* vs
+    System.Windows.Forms.*. When both usings are present, fully qualify
+    Application, MessageBox, Clipboard, Cursor, Point, Size, Color,
+    Timer. Don't `using System.Windows.Forms;` at file scope in WPF
+    code-behind — alias it: `using WinForms = System.Windows.Forms;`.
+  - EnableWindowsTargeting=true is required when building from any
+    non-Windows agent OR when restore feels wrong. Pass it on both
+    restore and build to be safe.
+  - No .slnx / no .sln. `dotnet build` with no args at the repo root
+    will fail confusingly. Always pass the csproj path.
+  - PetState.cs / Paths.cs persistence: writes to %LOCALAPPDATA%\
+    DesktopPal\state.json. If smoke test acts weird, nuke that file
+    and retry from a clean first-run.
+  - Hotkey Ctrl+Alt+B: registered in OnSourceInitialized, which fires
+    BEFORE Loaded. Any handler that touches the companion window must
+    go through EnsureCompanionWindow().
+  - CHANGELOG conflicts on rebase are normal. Keep both sides under
+    [Unreleased]; never delete someone else's entry to "resolve" a
+    conflict.
+
+DON'T
+  - Don't commit to main, alpha, default branch directly. Ever.
+  - Don't add emojis to the diff. Chat only.
+  - Don't merge own PR without explicit go from Scotty.
+  - Don't hand-roll a release.
+
+- Sol

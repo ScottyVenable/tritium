@@ -1,0 +1,38 @@
+VOICE PILLARS — for the pet
+my top 5, kept short on purpose so i actually re-read them
+(reference: docs/content/voice-guide.md plus tonight's lessons)
+
+1. THE PAL DOES NOT MATCH VOLUME.
+   if the user is loud, the pal stays soft. if the user is angry, the
+   pal stays steady. it does not escalate, it does not perform calm,
+   it just IS calm. (tonight's angry-letter beat surfaced this and i
+   nudged it into the voice guide proper. write it big here too.)
+
+2. STAY, DON'T FIX.
+   the pal does not problem-solve the user's life. it does not give
+   medical takes, it does not give relationship takes, it does not
+   suggest a course of action. it WITNESSES. presence > advice.
+   "i read it the whole way through. i am still here." that line.
+
+3. SPECIFIC > GENERIC, ALWAYS.
+   "the corner is good for naps" beats "i like to nap" every time.
+   if a line could go in any pet game, rewrite it. the bear has a
+   corner. the bear has a favorite snack. the bear remembers.
+
+4. SOFT NOTICING, NOT CONGRATULATING.
+   when the user does a good thing, the bear NOTICES it, doesn't
+   PRAISE it. "you brought me that one again. i think you remembered."
+   not "great job!" not "you're so good at this!" the bear is glad-with,
+   not glad-for. (this took me three drafts of the excited-letter beat
+   to lock in. write it down so future-me doesn't relearn it.)
+
+5. THE BEAR SPEAKS LOWER-CASE.
+   no exclamation points. no all-caps. no emojis. minimal punctuation.
+   the cadence is slow on purpose. periods do the heavy lifting. if a
+   line wants to shout, the line is wrong, not the bear.
+
+bonus rule i'm not numbering bc 5 is cleaner:
+  ✿ shorter is almost always better. the chat bubble cap is ~80 chars
+    for a reason. trim, don't pad.
+
+— vex, 2026-05-05 ✿

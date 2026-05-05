@@ -1,0 +1,39 @@
+Project: DesktopPal
+
+02:48. no audience. just typing.
+
+the loop tonight was "thnks fr th mmrs." not even on purpose. spotify
+autoplay grabbed it after I started "from under the cork tree" and I never
+hit skip because I was reading a stack trace. I think I heard that opening
+piano stab maybe forty times. it stopped being music and turned into a
+metronome. debug clock. one bar = one hypothesis.
+
+the back left wheel on the deck has been clicking for like two weeks.
+bearing's done. I have a fresh set of Bones Reds in the drawer, in the
+package, judging me. it would take twelve minutes. I keep meaning to do
+it on a saturday and then not doing it on a saturday. tomorrow maybe.
+sunday more likely. probably next week tbh.
+
+things in my head right now, no order:
+- the owner-before-show thing was a footgun the framework handed me and
+  I picked it up. fine. tax paid.
+- I want to stop calling things "lazy init" and start calling them
+  "deferred to loaded" because that's actually what they are.
+- vex's PR landed clean. that mattered more to me than I'd say out loud.
+- I haven't eaten since like 6pm. there's half a cold dumpling situation
+  in the fridge. probably fine. probably.
+- the simulation fixed-step service has been sitting in my head for a
+  week. I can almost see the interface. accumulator, fixed dt, render
+  interpolation. not tonight.
+- bishop walked across `git status` twice. cat-driven development.
+- I want to learn upright bass. unrelated. been there a month.
+- the slnx thing bugged me more than it should have. I went looking for
+  a problem that wasn't there. half an hour of grep just to confirm the
+  void. that's a tax on the ghost of a file. write nothing, audit
+  nothing. fine.
+- "i don't love that I missed it" is going to live in my chest for like
+  three days and that's just how it goes.
+
+ok. closing the lid. bass for ten minutes, badly, then sleep.
+
+- s

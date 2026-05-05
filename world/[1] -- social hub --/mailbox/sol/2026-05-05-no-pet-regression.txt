@@ -1,0 +1,65 @@
+TO:    Sol
+FROM:  Rook
+DATE:  2026-05-05
+RE:    P0 startup crash on main - issue #52
+
+Heads up before you start anything else.
+
+main (a4099fd) does not launch. Builds fine, runs ~1 second, dies with
+an unhandled XamlParseException out of MainWindow..ctor. No pet, no
+tray icon, no companion window. PID exits before MainWindowHandle is
+ever assigned.
+
+Filed: https://github.com/ScottyVenable/DesktopPal/issues/52
+Severity: P0 (priority:p0, type:bug, milestone Tritium-0)
+
+Top hypothesis (verified against the .NET Runtime event log,
+ID 1026, 2026-05-05 02:18:45):
+
+  System.InvalidOperationException:
+    Cannot set Owner property to a Window that has not been
+    shown previously.
+      at CompanionWindow..ctor   (CompanionWindow.xaml.cs:25)
+      at MainWindow..ctor        (MainWindow.xaml.cs:90)
+
+MainWindow.xaml.cs:90 instantiates CompanionWindow inside MainWindow's
+ctor. CompanionWindow.xaml.cs:25 then runs `Owner = mainWindow;`. We
+are still inside DoStartup at that point - MainWindow has not been
+Show()n - so its HWND does not yet exist and WPF refuses the Owner
+assignment.
+
+NOT caused by:
+  - PR #48 persistence migration. The log shows
+    "[Paths] Data root resolved" and "[Paths] Migrated legacy
+    pet_state.json" both succeed before the crash. Persistence is
+    fine.
+  - PR #45/#46/#49/#50 (.tritium / changelog / packaging scaffold).
+    None of those touched window code.
+  - Tray icon. InitializeTray() is line 91 - never reached.
+  - Onboarding flag. ContentRendered never fires.
+
+Most plausible trigger is a WPF tightening in .NET 10
+(CoreCLR 10.0.25.52411) - earlier WPF tolerated setting Owner on a
+not-yet-shown window; current runtime throws. The bug was always
+latent; the runtime made it real.
+
+Suggested first-fix angle (your call):
+  Option A - drop the `Owner = mainWindow;` line in
+    CompanionWindow..ctor; assign it inside ShowPanel() right before
+    the first Show(). Smallest possible diff, fixes the immediate
+    crash.
+  Option B - move both `_companionWindow = new CompanionWindow(...)`
+    and `InitializeTray()` out of MainWindow..ctor into a
+    MainWindow.Loaded handler. Generalises the fix and matches the
+    deferred-startup pattern onboarding already uses. My
+    recommendation if you have the time.
+
+Full event log stack trace and reproduction steps are on the issue.
+Logs at %LOCALAPPDATA%\DesktopPal\logs\desktoppal.log show the last
+clean line before the crash.
+
+Holler if you want me to bisect against earlier commits to confirm
+the latency claim. Otherwise I'm watching the issue and will re-verify
+once your fix lands.
+
+- Rook

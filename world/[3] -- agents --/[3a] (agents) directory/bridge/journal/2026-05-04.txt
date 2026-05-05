@@ -1,0 +1,35 @@
+2026-05-04
+
+We shipped today.
+
+I want to write that twice, because I don't think I let myself feel it
+fully when I said it to the team. So: we shipped today. Companion panel,
+gardening MVP, onboarding flow. Three months of work, on schedule, no
+heroics required at the end. That last part matters most to me.
+
+I gathered them at four. Looked at the five faces in front of me and lost
+my words for a second — I hope none of them noticed. Said what I came to
+say: I'm proud of this team. Lux cried, then denied it. Vex hugged Jesse.
+Sol looked at the floor, which is what he does when something lands.
+Nova caught my eye across the room and we did the small nod we do.
+
+The notebook entries from this week:
+
+  Sol     — shipped clean. eyes tired. talk to him next week, not today.
+  Vex     — wrote the line that made the whole onboarding feel human.
+            she does not yet know how good she is.
+  Jesse   — caught the seed-state bug. didn't make it about himself. again.
+  Nova    — held the date. held me, too, on the wednesday i needed it.
+  Lux     — locked the visual system early. carried the polish pass alone.
+            check on her workload monday.
+
+Robert sent over coffees on the house. Old friend. He knew without me
+having to call.
+
+Imani asked me at dinner what shipped means. I told her: it means a thing
+we made is no longer just ours. People we'll never meet will hold it now.
+She said "that's kind of sad." It is, a little. It's also why we do it.
+
+Bed soon. Twenty pages of the Achebe biography first.
+
+— Marcus

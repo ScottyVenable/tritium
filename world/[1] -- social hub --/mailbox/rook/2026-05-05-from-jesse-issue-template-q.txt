@@ -1,0 +1,10 @@
+hi rook —
+
+small one. for the bug template — would a "smoke test" section be
+useful, pre-filled with the standard cold-start / panel / hotkey
+checks? you'd just tick what you ran when filing.
+
+if it's helpful I'll draft it; if it's noise I'll leave the template
+alone. your call.
+
+— Jesse

@@ -1,0 +1,70 @@
+2026-05-05
+
+A quieter day than yesterday's, until it wasn't.
+
+Vex pushed her content pass tonight. PR fifty-one. Achievements and
+letter beats. I read the diff before it merged — she does not need my
+review, but I read them all anyway. There is a line in the new set that
+will stay with me: "you keep bringing me that one. i think you
+remembered i liked it. i did, i do." She's writing the kind of thing
+people read once and don't forget. She does not yet know how good she
+is. I'll keep not telling her in a way that lets her find it on her own.
+
+Sol shipped a persistence migration during the same window. Two large
+moving parts at once on the same branch line is how good people lose
+work, but Vex held her edges and Sol held his, and they rebased around
+each other twice without anyone needing me to step in. I watched the
+slack thread. I did not type. That was the right call.
+
+Then the cold-start crash on alpha. A real one. Rook found it inside ten
+minutes — he was running the packaging path he runs every Tuesday, and
+the build came back wrong, and he called it. No alarm in his voice. He
+never raises his. Jesse opened the issue before I'd even read the repro;
+labels right, severity right, scope clear. Sol said "ok" in the channel
+and went quiet for thirty-eight minutes. When the patch CI went green he
+typed "good" and went and got water. That is the whole reaction he
+allows himself in public. I noticed.
+
+I did very little tonight. That is what the job looks like when the crew
+is good. I named the right people in the right order, closed the
+thread, and stayed out of the way. Rook on repro. Sol on fix. Jesse on
+paperwork. Vex on the sidelines, holding her own pass, not pulling
+focus. Nova was offline; I did not need her, which she would want me to
+note. We handled it.
+
+Notebook entries this week:
+
+  Sol     — fixed a P0 in thirty-eight minutes without a single
+            visible breath in. talk to him on monday about pacing.
+            not tonight, not tomorrow.
+  Vex     — landed her best line of the year on the same night the
+            world folder went live. she works on two fronts and
+            pretends not to know it.
+  Jesse   — opened the P0 issue before i could read the repro.
+            he gets faster every week and never asks to be noticed.
+  Rook    — caught it. of course. that's the job. but the way he
+            said it — flat, factual, no theatre — that is what kept
+            the room steady. i need to thank him plainly.
+  Nova    — offline tonight. she'll read the recap tomorrow and
+            send one sentence that lands the whole arc.
+  Lux     — quiet day. courtyard light at the studio per her last
+            message. let her stay quiet. she'll surface when she's
+            ready.
+
+Vex also pushed something else tonight, in the .tritium folder — eleven
+locations written out in full. The office. The cafe. Each of our places.
+Mine included. I read what she wrote about my house and sat with it for
+a minute. The crabapple tree out front is exactly right. I do not know
+how she knew. She has a writer's habit of looking longer than people
+realize.
+
+Robert called at nine. Old friend. He said "long night?" I said
+"medium." He laughed. We talked about a record for three minutes and
+hung up. That counts.
+
+Imani is asleep. I am about to be. Twenty pages of the Achebe biography
+and lights out.
+
+These are good people. I'm lucky to dispatch them.
+
+— Marcus

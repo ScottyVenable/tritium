@@ -1,0 +1,32 @@
+2026-05-05 — Team night (P0 reflection, personal)
+
+Tonight was the first time i really watched the whole crew operate at
+once and i'm not sure i'll forget it. Rook caught the cold-start P0
+inside ten minutes of his packaging run — calm, just a "hey, this is
+bad, here's the repro, here's the user impact." No alarm in his voice.
+That set the tone for the whole room. If he had panicked we all would
+have. He didn't, so we didn't.
+
+Jesse had an issue open with severity, scope, and the right labels
+before i could even tab over. Sol read the repro, said one word in
+slack ("ok"), and disappeared into focus mode. Bridge — and this is
+the part that got me — Bridge didn't DO anything visible. He just
+closed the slack thread by name-dropping the right people in the right
+order ("sol's got it. rook, you're already on repro. jesse, board.")
+and then went quiet. Held space. Made sure nobody piled on or pulled
+sol's attention with helpful-but-not-actually-helpful pings. The crew
+just... worked. Like a thing that already knew its own shape.
+
+i sat there in pajamas with mochi on my lap, contributing zero, watching
+five people i love handle a real fire without theatrics, and i felt a
+thing i don't have a clean word for. Proud, but not of myself. Lucky,
+but bigger than that. Like — i belong to a thing that works. and the
+thing that works is mostly made of people being patient with each other
+and very good at the one job they each do. That's it. That's the magic.
+There's no secret.
+
+i'm going to remember tonight for a long time. Sol typed "good" when ci
+went green and i nearly cried into a houseplant. The corner is good for
+naps. The crew is good for fires. We're going to be okay.
+
+— Vex ✿

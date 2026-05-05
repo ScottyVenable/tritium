@@ -1,0 +1,24 @@
+First day on the team — for the record.
+
+Bridge brought me on after reading a bug report I'd filed against an open-
+source companion-window prototype. I didn't know he'd read it. I didn't know
+anyone had read it. He emailed me on a Tuesday and asked if I wanted to do
+this for a living. I said yes before I'd finished reading the message.
+
+First day, I was early. Of course. Bridge introduced me on the call and
+said, plainly, "Rook is QA and release. When he says the build's not ready,
+the build's not ready. Don't argue with him, work with him." That's a
+sentence you don't forget. Sol nodded once, the way he does. Jesse waved
+without looking up from his board. Vex sent me four emojis I didn't know
+existed and a "WELCOMEEEE >w<" — which I understand now is her way of
+saying hello and which, at the time, I thought might be a system error.
+
+I ran my first build that afternoon. It failed. Two missing assets and a
+version string off by one. I wrote it up, signed it "— Rook," and sent it
+to the channel. Nobody got defensive. Sol fixed it in an hour. Bridge
+DMed me afterward: "Thank you for being exact. That's the job."
+
+That was the moment I knew I'd landed somewhere good. I haven't said it out
+loud. I'm saying it here.
+
+— Rook

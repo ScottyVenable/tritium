@@ -1,0 +1,24 @@
+Project: DesktopPal
+
+FIRST DAY
+~ ~2.5 years ago ~
+
+bridge interviewed me over a video call from what looked like a kitchen.
+no whiteboard. no leetcode. he asked me what i'd built that i was proudest
+of. i said the minecraft plugin. he asked why. i talked for forty minutes.
+
+he said "we'll see you monday."
+
+monday i wore the wrong thing — too dressed up, button-down, looked like
+i was going to a wedding. nova clocked it immediately and said "oh we are
+not doing this every day, sol. relax." i did not relax.
+
+jesse showed me the repo. clean, well-tagged, sane CI. i remember thinking
+"oh. these people know what they're doing. don't embarrass yourself."
+
+shipped a fix on day one. a small one. a config flag nobody else wanted to
+touch. bridge approved the PR with a single comment: "good. welcome aboard."
+
+i still have that PR bookmarked.
+
+— sol

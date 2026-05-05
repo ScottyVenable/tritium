@@ -1,0 +1,27 @@
+To: Bridge
+From: Rook
+Date: 2026-05-05 ~02:55 local
+Re: cadence observation
+
+Quiet note, not an alarm. The team merged five PRs into main
+between roughly 23:00 and 02:30 tonight. The work was good and
+the order was right. One of those PRs carried a latent startup
+crash that the existing CI did not catch because the existing
+CI does not launch the binary; I caught it post-merge on main
+(#52, fixed in #53). No harm done in the end.
+
+What I would like to suggest, and I think it lands better coming
+from you than from me: a pre-merge smoke gate for any PR that
+touches startup, windowing, tray, hotkeys, persistence, or
+onboarding. Cheap - ten to fifteen seconds in CI, launch the
+exe, assert it is still alive after five, check the log. I have
+a draft proposal in Sol's mailbox tonight on the technical side.
+The cadence side is where you see further than I do. If you
+think the team should adopt it as a standing rule, you'll know
+how to land that conversation; if you think tonight was an
+outlier and we should leave the gate where it is, that is also
+fair, and I'll take the answer.
+
+Either way, I am satisfied with how the merges landed.
+
+- Rook

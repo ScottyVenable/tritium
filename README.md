@@ -221,3 +221,12 @@ bash scripts/verify.sh
 See [CHANGELOG.md](CHANGELOG.md). The dashboard ships read-write for IM/email and read-only for `SETTINGS.jsonc` reflection in v0.1; the editable settings panel and tunnel-mode documentation land in v0.2.
 
 — Tritium Team
+
+
+## The Team & Their World
+
+Tritium is built by a named team of agents — Bridge, Sol, Jesse, Vex, and
+Rook — working under Scotty as Creative Director. Their living world (journals,
+memories, mailbox, locations) is snapshotted in [world/](world/README.md).
+That folder is a backup of the team's shared space; it is not required to
+run the runtime.

@@ -1,0 +1,152 @@
+================================================================
+2026-05-05 - Post-mortem: no-pet regression on main (issue #52)
+================================================================
+
+Severity:    P0
+Detected:    2026-05-05 ~02:25 local, on main post-#50 merge
+Resolved:    2026-05-05 via PR #53 (Sol)
+Time-to-fix: well under an hour from filing to merge
+Author:      Rook
+
+
+Symptom
+-------
+On launch, DesktopPal.exe started, ran for ~1 second, and exited.
+No companion sprite drawn. No system-tray icon registered. No
+visible error dialog. Process gone from Get-Process inside 6s of
+spawn. From a user's seat: double-click, nothing happens, app is
+not running. The kind of failure that looks like the build never
+ran at all.
+
+
+Root cause
+----------
+A latent ordering bug in MainWindow construction.
+
+  MainWindow..ctor (MainWindow.xaml.cs:90)
+    -> new CompanionWindow(this)
+      -> CompanionWindow..ctor (CompanionWindow.xaml.cs:25)
+        -> this.Owner = mainWindow
+
+The Owner assignment ran while MainWindow was still inside its
+own constructor. The window had never been Show()n, so the HWND
+did not exist yet. .NET 10 WPF refuses that assignment with:
+
+  System.InvalidOperationException:
+    Cannot set Owner property to a Window that has not been
+    shown previously.
+
+The exception escaped through the XAML parser as a
+XamlParseException, the dispatcher tore the app down, and the
+process exited. No graceful error path because the failure
+happened before the message loop existed.
+
+The bug itself is older than tonight. Earlier .NET WPF runtimes
+tolerated assigning Owner to an as-yet-unshown window; .NET 10
+tightened that contract. The persistence work in PR #48 did not
+introduce the crash - it is innocent. The runtime change made a
+pre-existing latent ordering bug into a hard launch failure.
+
+
+Detection
+---------
+Three signals, in this order:
+
+  1. Smoke launch by hand. Started DesktopPal.exe, captured PID,
+     waited 6s, Get-Process showed the PID gone. That alone said
+     "the build is broken at runtime."
+  2. Log file at %LOCALAPPDATA%\DesktopPal\logs\desktoppal.log.
+     Last line was "[SystemIntegration] Watching desktop path
+     ... for *.txt letters." No "[MainWindow] Startup complete."
+     ever. Confirmed: crash sits between SystemIntegration init
+     and MainWindow's first paint.
+  3. Windows Event Log, Application channel, .NET Runtime ID
+     1026. Carried the full XamlParseException stack with the
+     CompanionWindow.xaml.cs:25 -> MainWindow.xaml.cs:90 frames.
+     Named the file, named the line, named the property. Done.
+
+Total diagnosis time from "process exits" to "this is the file
+and the line" was about four minutes. The Event Log paid for
+itself again.
+
+
+Fix
+---
+Sol, PR #53. Companion window construction and tray-icon
+registration were moved out of MainWindow..ctor into a Loaded
+handler. By the time Loaded fires, the window is shown, the
+HWND exists, Owner can be set, and the crash path is gone.
+Pattern matches the existing onboarding-window init, which
+already deferred to Loaded for the same class of reason.
+
+Verification I ran post-merge:
+  - dotnet build on csproj: 0 errors, 0 warnings.
+  - Launch: PID alive at +10s, MainWindowHandle non-zero,
+    tray icon present, sprite drawn, hotkey toggles companion.
+  - Log file ends on "[MainWindow] Startup complete." as
+    expected.
+  - No new entries in the Application event log under .NET
+    Runtime.
+
+
+Why we missed it pre-merge
+--------------------------
+The persistence PR's CI was green, and we trusted that. The CI
+ran `dotnet build` and `dotnet test`. Neither of those launches
+the binary. A build that compiles cleanly and a binary that
+starts cleanly are not the same statement, and tonight is the
+proof. Build green != launches.
+
+There was also no human smoke launch between #48 landing and
+the next PRs stacking on top of it. Five PRs went through main
+in roughly three and a half hours; the cadence outran the gate.
+That is fixable without slowing anyone down - the gate just has
+to be cheap enough to run on every PR.
+
+
+Recommended preventatives
+-------------------------
+Two options. Pick one. Both is better.
+
+  A. CI smoke-launch step (preferred, cheap).
+     After a successful build, the workflow:
+       1. Runs the produced exe with a `--smoke` flag (or just
+          launches it headless if the app supports it; if not,
+          launch normally with a short watchdog).
+       2. Captures the PID.
+       3. Waits 5 seconds.
+       4. Asserts the process is still alive AND that
+          MainWindowHandle is non-zero (Get-Process | Where ...).
+       5. Sends WM_CLOSE or kills cleanly. Asserts exit code 0
+          on the close path; on the kill path, accepts but logs.
+       6. Greps the log file for "[MainWindow] Startup complete."
+          and for any "Exception" / "Error" lines. Fails the
+          step on either miss.
+     Implemented as a step in the existing Windows runner. Adds
+     ~10-15s to CI. Catches tonight's class of bug entirely.
+
+  B. Unit/integration test that constructs windows in the right
+     order on a WPF dispatcher. STA thread, new Application,
+     instantiate MainWindow, drive Loaded, instantiate
+     CompanionWindow against the shown owner, assert no
+     exception. More precise but more setup. Doesn't catch
+     non-XAML startup regressions (e.g. a crashing service in
+     ctor).
+
+A is the higher-leverage move. B is good hygiene for the
+specific window-ordering contract once we have it. Proposing A
+to Sol tonight; B can wait for a quieter day.
+
+
+Followups (not blocking)
+------------------------
+- Add the smoke step to scripts/build-release.ps1 too, so a
+  local pre-push run catches it before CI does.
+- Document the "windows built in ctor must not set Owner"
+  contract somewhere a future contributor will read it. Probably
+  a comment at CompanionWindow.xaml.cs:25 referencing #52.
+- Revisit whether any other windows do construction work in
+  their ctors that should defer to Loaded. Quick audit, not a
+  project.
+
+- Rook
