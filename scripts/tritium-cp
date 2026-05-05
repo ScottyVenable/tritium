@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""Tritium OS v4.1 -- tritium-cp: ASCII control panel."""
+from __future__ import annotations
+import json, os, subprocess, sys
+from pathlib import Path
+from datetime import datetime
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+TRITIUM_HOME = Path(os.environ.get("TRITIUM_HOME", Path.home() / ".tritium-os"))
+
+REGISTRY   = REPO_ROOT / "registry" / "models.json"
+MANIFEST   = REPO_ROOT / "world_vault" / "manifest.json"
+LEDGER_DB  = Path(os.environ.get("TRITIUM_LEDGER_DB", TRITIUM_HOME / "ledger" / "ledger.db"))
+TIER_FILE  = TRITIUM_HOME / "state" / "current_tier"
+SHIELD_OK  = TRITIUM_HOME / "state" / "shield.ok"
+KEYS_DIR   = TRITIUM_HOME / "keys"
+
+W = 60
+DIV = "+" + "-" * (W - 2) + "+"
+
+def box(label): print(f"+--- {label} " + "-" * max(0, W - 6 - len(label)) + "+")
+def row(k, v): print(f"  {k:<22}{v}")
+def sep():     print(DIV)
+
+def _yn(b): return "OK     " if b else "MISSING"
+
+def section_header():
+    print(DIV)
+    print(f"  TRITIUM OS  --  Control Panel           {datetime.now().strftime('%H:%M')}")
+    print(DIV)
+
+def section_registry():
+    box("Registry")
+    if not REGISTRY.exists():
+        row("models.json", "MISSING"); return
+    try:
+        m = json.loads(REGISTRY.read_text())
+        for agent in m.get("agents", []):
+            row(f"  {agent['name']:<20}", f"T{agent['tier']}  {agent.get('model','?')[:28]}")
+        ta = m.get("tier_auto", {})
+        if ta:
+            row("snap_back_baseline", ta.get("snap_back_baseline","?"))
+    except Exception as e:
+        row("parse error", str(e))
+
+def section_tier():
+    box("Tier")
+    tier = TIER_FILE.read_text().strip() if TIER_FILE.exists() else "0"
+    agents = {"0":"scout","1":"bridge","2":"sol","3":"rook"}
+    row("Current tier", f"T{tier}")
+    row("Agent", agents.get(tier, "?"))
+    row("Tier file", "present" if TIER_FILE.exists() else "not found")
+
+def section_scout():
+    box("Scout / T0")
+    try:
+        res = subprocess.run(
+            ["python3", str(REPO_ROOT/"bridge"/"__main__.py"), "--ping"],
+            capture_output=True, timeout=3)
+        row("bridge ping", "OK" if res.returncode == 0 else f"exit {res.returncode}")
+    except Exception:
+        row("bridge ping", "not reachable")
+    agent_f = REPO_ROOT / ".github" / "agents" / "Scout.agent.md"
+    row("Scout.agent.md", _yn(agent_f.exists()))
+
+def section_vault():
+    box("Vault")
+    row("manifest.json", _yn(MANIFEST.exists()))
+    if MANIFEST.exists():
+        try:
+            m = json.loads(MANIFEST.read_text())
+            p = m.get("payloads", {})
+            row("Payloads sealed", sum(1 for e in p.values() if e.get("status")=="sealed"))
+            row("Payloads open  ", sum(1 for e in p.values() if e.get("status")=="open"))
+        except Exception as e:
+            row("parse error", str(e))
+    row("Ed25519 key", _yn((KEYS_DIR/"id.ed25519").exists()))
+    row("X25519 key", _yn((KEYS_DIR/"wrap.x25519").exists()))
+
+def section_ledger():
+    box("Ledger")
+    row("ledger.db", _yn(LEDGER_DB.exists()))
+    if LEDGER_DB.exists():
+        try:
+            import sqlite3
+            with sqlite3.connect(str(LEDGER_DB)) as cx:
+                count = cx.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+            row("Event rows", count)
+        except Exception:
+            row("sqlite3", "unreadable")
+
+def section_shield():
+    box("Shield")
+    row("shield.ok", _yn(SHIELD_OK.exists()))
+    if SHIELD_OK.exists():
+        import time
+        age = int(time.time() - SHIELD_OK.stat().st_mtime)
+        fresh = age <= 86400
+        row("Age (s)", f"{age}  ({'fresh' if fresh else 'STALE'})")
+
+def section_git():
+    box("Git")
+    try:
+        branch = subprocess.run(["git","rev-parse","--abbrev-ref","HEAD"],
+            capture_output=True, cwd=REPO_ROOT, timeout=3).stdout.decode().strip()
+        row("Branch", branch)
+        sha = subprocess.run(["git","rev-parse","--short","HEAD"],
+            capture_output=True, cwd=REPO_ROOT, timeout=3).stdout.decode().strip()
+        row("HEAD", sha)
+    except Exception:
+        row("git", "not available")
+
+def section_credits():
+    box("Credits")
+    cl = REPO_ROOT / "registry" / "credits.ledger"
+    row("credits.ledger", _yn(cl.exists()))
+    if cl.exists():
+        lines = [l for l in cl.read_text().splitlines() if not l.startswith("#")]
+        row("Entries", len(lines))
+
+def main():
+    section_header()
+    section_registry()
+    section_tier()
+    section_scout()
+    section_vault()
+    section_ledger()
+    section_shield()
+    section_git()
+    section_credits()
+    sep()
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

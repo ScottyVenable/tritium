@@ -1,0 +1,7 @@
+{
+  "version": "1.0",
+  "algo": "AES-256-GCM",
+  "created": "2025-07-21",
+  "note": "Payload entries added by tritium-crypt seal. Do not edit by hand.",
+  "payloads": {}
+}

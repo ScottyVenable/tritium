@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+# Tritium OS v4.1 -- tier-auto
+# Manages active agent tier. Writes ~/.tritium-os/state/current_tier.
+# On 'snap', returns to T0/Scout and closes any open vault payloads.
+# Usage:
+#   tier-auto set <tier-number>   -- activate tier (0-3)
+#   tier-auto snap                -- snap back to T0, close open payloads
+#   tier-auto status              -- print current tier and agent
+#   tier-auto agent               -- print agent name for current tier
+
+set -euo pipefail
+
+CMD="${1:-status}"
+TRITIUM_HOME="${TRITIUM_HOME:-$HOME/.tritium-os}"
+STATE_DIR="$TRITIUM_HOME/state"
+TIER_FILE="$STATE_DIR/current_tier"
+LEDGER_DB="${TRITIUM_LEDGER_DB:-$TRITIUM_HOME/ledger/ledger.db}"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$HERE/.." && pwd)"
+REGISTRY="$REPO_ROOT/registry/models.json"
+
+# Read tier from file; default to 0
+_current_tier() {
+    [ -f "$TIER_FILE" ] && cat "$TIER_FILE" || echo "0"
+}
+
+# Map tier number to agent name
+_tier_agent() {
+    local tier="${1:-0}"
+    case "$tier" in
+        0) echo "scout" ;;
+        1) echo "bridge" ;;
+        2) echo "sol" ;;
+        3) echo "rook" ;;
+        *) echo "unknown" ;;
+    esac
+}
+
+_log_event() {
+    local kind="$1"; shift
+    local payload_json="${1:-{}}"
+    if command -v python3 >/dev/null 2>&1 && [ -f "$LEDGER_DB" ]; then
+        python3 - <<INNERPY 2>/dev/null || true
+import sys, json
+sys.path.insert(0, '$REPO_ROOT/bridge')
+try:
+    from tritium_bridge.ledger import Ledger
+    Ledger('$LEDGER_DB').log_event(kind='$kind', agent='tier-auto', payload=$payload_json)
+except Exception: pass
+INNERPY
+    fi
+}
+
+# Close open vault payloads if mirror dir has payload subdirs
+_close_open_payloads() {
+    MIRROR="${TRITIUM_MIRROR_DIR:-$REPO_ROOT/.tritium_mirror}"
+    if [ -d "$MIRROR" ]; then
+        for pd in "$MIRROR"/*/; do
+            pid=$(basename "$pd")
+            [ "$pid" = "*" ] && continue
+            if [ -f "$pd/payload" ]; then
+                printf '[snap] Closing open payload: %s\n' "$pid"
+                bash "$HERE/tritium-close" "$pid" || true
+            fi
+        done
+    fi
+}
+
+case "$CMD" in
+  set)
+    TIER="${2:-}"
+    if ! printf '%s' "$TIER" | grep -Eq '^[0-3]$'; then
+        printf '[FAIL] Tier must be 0-3.\n' >&2; exit 1
+    fi
+    mkdir -p "$STATE_DIR"
+    old_tier=$(_current_tier)
+    printf '%s' "$TIER" > "$TIER_FILE"
+    agent=$(_tier_agent "$TIER")
+    printf '[ OK ] Tier set: %s -> %s  agent=%s\n' "$old_tier" "$TIER" "$agent"
+    _log_event "tier_set" "{\"from_tier\":$old_tier,\"to_tier\":$TIER,\"agent\":\"$agent\"}"
+    ;;
+
+  snap)
+    old_tier=$(_current_tier)
+    old_agent=$(_tier_agent "$old_tier")
+    _close_open_payloads
+    mkdir -p "$STATE_DIR"
+    printf '0' > "$TIER_FILE"
+    printf '[ OK ] Snap-back complete: %s (T%s) -> scout (T0)\n' "$old_agent" "$old_tier"
+    _log_event "tier_snapback" "{\"from_tier\":$old_tier,\"from_agent\":\"$old_agent\",\"to_tier\":0,\"to_agent\":\"scout\"}"
+    ;;
+
+  status)
+    tier=$(_current_tier)
+    agent=$(_tier_agent "$tier")
+    printf '+--- tier-auto status ----\n'
+    printf '  Current tier : %s\n' "$tier"
+    printf '  Agent        : %s\n' "$agent"
+    printf '  Tier file    : %s\n' "$TIER_FILE"
+    printf '  Registry     : %s\n' "${REGISTRY:-N/A}"
+    ;;
+
+  agent)
+    _tier_agent "$(_current_tier)"
+    ;;
+
+  *)
+    printf '[FAIL] Unknown command: %s\n' "$CMD" >&2
+    printf 'Usage: tier-auto {set <0-3>|snap|status|agent}\n' >&2
+    exit 1
+    ;;
+esac

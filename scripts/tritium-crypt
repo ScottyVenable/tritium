@@ -1,0 +1,346 @@
+#!/usr/bin/env python3
+"""Tritium OS v4.1 -- tritium-crypt: vault encryption/decryption.
+
+AES-256-GCM bulk encryption with X25519/HKDF-SHA-256 key wrapping
+and Ed25519 manifest signing. Spec: docs/SECURITY-tritium-crypt.md.
+
+Usage:
+  tritium-crypt init
+  tritium-crypt init-keys [--force]
+  tritium-crypt seal <payload-id> <input-path>
+  tritium-crypt open <payload-id> [--mirror-dir <dir>]
+  tritium-crypt close <payload-id> [--mirror-dir <dir>]
+  tritium-crypt verify [<payload-id>]
+  tritium-crypt list
+  tritium-crypt status
+"""
+from __future__ import annotations
+import argparse, hashlib, json, os, sys
+from pathlib import Path
+
+CRYPT_VERSION = "1.0"
+ALGO = "AES-256-GCM"
+NONCE_LEN = 12
+KDF_INFO = b"tritium-crypt v1"
+
+_SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT   = _SCRIPT_DIR.parent
+TRITIUM_HOME    = Path(os.environ.get("TRITIUM_HOME", Path.home() / ".tritium-os"))
+KEYS_DIR        = TRITIUM_HOME / "keys"
+VAULT_DIR       = Path(os.environ.get("TRITIUM_VAULT_DIR",  REPO_ROOT / "world_vault"))
+MANIFEST_PATH   = VAULT_DIR / "manifest.json"
+DEFAULT_MIRROR  = Path(os.environ.get("TRITIUM_MIRROR_DIR", REPO_ROOT / ".tritium_mirror"))
+
+
+def _require_crypto():
+    try:
+        from cryptography.hazmat.primitives.ciphers.aead import AESGCM          # noqa
+        from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey  # noqa
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey  # noqa
+        from cryptography.hazmat.primitives.kdf.hkdf import HKDF               # noqa
+    except ImportError:
+        sys.stderr.write(
+            "[FAIL] Python 'cryptography' package not installed.\n"
+            "       pip install cryptography\n"
+            "       Termux: pkg install python && pip install cryptography\n"
+        )
+        sys.exit(1)
+
+
+def _imp():
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+    from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import (
+        Ed25519PrivateKey, Ed25519PublicKey)
+    from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.exceptions import InvalidSignature
+    return AESGCM, X25519PrivateKey, Ed25519PrivateKey, Ed25519PublicKey, \
+           HKDF, hashes, serialization, InvalidSignature
+
+
+def _load_manifest():
+    if not MANIFEST_PATH.exists():
+        return {"version": CRYPT_VERSION, "algo": ALGO, "payloads": {}}
+    with MANIFEST_PATH.open(encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _save_manifest(m):
+    VAULT_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = MANIFEST_PATH.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(m, indent=2, sort_keys=False), encoding="utf-8")
+    json.loads(tmp.read_text(encoding="utf-8"))  # validate
+    tmp.replace(MANIFEST_PATH)
+
+
+def _sign_bytes(e):
+    return json.dumps({k: e[k] for k in
+        ("payload_id","algo","ct_hash","nonce_p","nonce_kek","nonce_wrap")},
+        sort_keys=True).encode("utf-8")
+
+
+def _load_x25519(keys_dir):
+    AESGCM, X25519PrivateKey, _, _, _, _, serialization, _ = _imp()
+    p = keys_dir / "wrap.x25519"
+    if not p.exists():
+        sys.stderr.write(f"[FAIL] X25519 wrap key not found: {p}\n       Run: tritium-crypt init-keys\n")
+        sys.exit(1)
+    raw = p.read_bytes()
+    if len(raw) == 32:
+        return X25519PrivateKey.from_private_bytes(raw)
+    return serialization.load_pem_private_key(raw, password=None)
+
+
+def _load_ed25519(keys_dir):
+    _, _, Ed25519PrivateKey, _, _, _, serialization, _ = _imp()
+    for name in ("id.ed25519", "id_ed25519"):
+        p = keys_dir / name
+        if p.exists():
+            raw = p.read_bytes()
+            if len(raw) in (32, 64):
+                return Ed25519PrivateKey.from_private_bytes(raw[:32])
+            return serialization.load_pem_private_key(raw, password=None)
+    sys.stderr.write(f"[FAIL] Ed25519 key not found in {keys_dir}\n       Run: tritium-crypt init-keys\n")
+    sys.exit(1)
+
+
+def _derive_kek(priv, nonce_kek):
+    _, _, _, _, HKDF, hashes, _, _ = _imp()
+    shared = priv.exchange(priv.public_key())
+    return HKDF(algorithm=hashes.SHA256(), length=32,
+                salt=nonce_kek, info=KDF_INFO).derive(shared)
+
+
+def cmd_init(args):
+    VAULT_DIR.mkdir(parents=True, exist_ok=True)
+    if MANIFEST_PATH.exists():
+        m = _load_manifest()
+        print(f"[ OK ] Manifest exists ({len(m.get('payloads',{}))} payload(s)).")
+    else:
+        _save_manifest({"version": CRYPT_VERSION, "algo": ALGO, "payloads": {}})
+        print("[ OK ] Vault initialized.")
+    print(f"       Vault : {VAULT_DIR}")
+    return 0
+
+
+def cmd_init_keys(args):
+    _require_crypto()
+    AESGCM, X25519PrivateKey, Ed25519PrivateKey, _, _, _, _, _ = _imp()
+    KEYS_DIR.mkdir(parents=True, exist_ok=True)
+    force = getattr(args, "force", False)
+    for name, cls in (("id.ed25519", Ed25519PrivateKey), ("wrap.x25519", X25519PrivateKey)):
+        p = KEYS_DIR / name
+        if p.exists() and not force:
+            print(f"[SKIP] {name} exists  (--force to overwrite)")
+        else:
+            p.write_bytes(cls.generate().private_bytes_raw())
+            print(f"[ OK ] {name} written: {p}")
+    print("       Keys are hardware-bound to this host. Never commit them.")
+    return 0
+
+
+def cmd_seal(args):
+    _require_crypto()
+    AESGCM, *_ = _imp()
+    pid = args.payload_id
+    src = Path(args.input_path)
+    if not src.exists():
+        sys.stderr.write(f"[FAIL] File not found: {src}\n"); return 1
+    plaintext = src.read_bytes()
+    K_p = os.urandom(32); nonce_p = os.urandom(NONCE_LEN)
+    ct = AESGCM(K_p).encrypt(nonce_p, plaintext, None)
+    ct_hash = hashlib.sha256(ct).hexdigest()
+    xp = _load_x25519(KEYS_DIR)
+    nonce_kek = os.urandom(NONCE_LEN)
+    kek = _derive_kek(xp, nonce_kek)
+    nonce_wrap = os.urandom(NONCE_LEN)
+    wrapped = AESGCM(kek).encrypt(nonce_wrap, K_p, None)
+    ed = _load_ed25519(KEYS_DIR)
+    entry = {
+        "payload_id": pid, "algo": ALGO, "ct_hash": ct_hash,
+        "nonce_p": nonce_p.hex(), "blob": f"{pid}.enc",
+        "wrapped_key": wrapped.hex(), "nonce_kek": nonce_kek.hex(),
+        "nonce_wrap": nonce_wrap.hex(),
+        "pub_x25519": xp.public_key().public_bytes_raw().hex(),
+        "pub_ed25519": ed.public_key().public_bytes_raw().hex(),
+        "signature": "", "status": "sealed",
+    }
+    entry["signature"] = ed.sign(_sign_bytes(entry)).hex()
+    blob = VAULT_DIR / entry["blob"]
+    tmp = blob.with_suffix(".enc.tmp"); tmp.write_bytes(ct); tmp.replace(blob)
+    m = _load_manifest()
+    m.setdefault("payloads", {})[pid] = entry
+    _save_manifest(m)
+    print(f"[ OK ] Sealed: {pid}  blob={blob}")
+    return 0
+
+
+def cmd_open(args):
+    _require_crypto()
+    AESGCM, _, _, Ed25519PublicKey, _, _, _, InvalidSignature = _imp()
+    pid = args.payload_id
+    mirror = Path(args.mirror_dir) if getattr(args,"mirror_dir",None) else DEFAULT_MIRROR
+    m = _load_manifest(); payloads = m.get("payloads", {})
+    if pid not in payloads:
+        sys.stderr.write(f"[FAIL] Payload '{pid}' not in manifest. Known: {', '.join(payloads) or '(none)'}\n"); return 1
+    e = payloads[pid]
+    ed_pub = Ed25519PublicKey.from_public_bytes(bytes.fromhex(e["pub_ed25519"]))
+    try: ed_pub.verify(bytes.fromhex(e["signature"]), _sign_bytes(e))
+    except InvalidSignature:
+        sys.stderr.write(f"[FAIL] Ed25519 signature invalid for '{pid}'. Refusing.\n"); return 1
+    blob = VAULT_DIR / e["blob"]
+    if not blob.exists():
+        sys.stderr.write(f"[FAIL] Blob missing: {blob}\n"); return 1
+    ct = blob.read_bytes()
+    if hashlib.sha256(ct).hexdigest() != e["ct_hash"]:
+        sys.stderr.write(f"[FAIL] Ciphertext hash mismatch for '{pid}'.\n"); return 1
+    xp = _load_x25519(KEYS_DIR)
+    kek = _derive_kek(xp, bytes.fromhex(e["nonce_kek"]))
+    try: K_p = AESGCM(kek).decrypt(bytes.fromhex(e["nonce_wrap"]), bytes.fromhex(e["wrapped_key"]), None)
+    except Exception as exc:
+        sys.stderr.write(f"[FAIL] Key unwrap: {exc}\n"); return 1
+    try: pt = AESGCM(K_p).decrypt(bytes.fromhex(e["nonce_p"]), ct, None)
+    except Exception as exc:
+        sys.stderr.write(f"[FAIL] Decrypt: {exc}\n"); return 1
+    out_dir = mirror / pid; out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / "payload"
+    if out.exists():
+        sys.stderr.write(f"[WARN] Dirty mirror for '{pid}': {out}\n       Run tritium-close first.\n"); return 1
+    tmp = out.with_suffix(".tmp"); tmp.write_bytes(pt); tmp.replace(out)
+    m["payloads"][pid]["status"] = "open"; _save_manifest(m)
+    print(f"[ OK ] Opened: {pid}  mirror={out}")
+    print(f"       Run 'tritium-close {pid}' when done.")
+    return 0
+
+
+def cmd_close(args):
+    _require_crypto()
+    AESGCM, *_ = _imp()
+    pid = args.payload_id
+    mirror = Path(args.mirror_dir) if getattr(args,"mirror_dir",None) else DEFAULT_MIRROR
+    mp = mirror / pid / "payload"
+    if not mp.exists():
+        print(f"[INFO] Mirror not found for '{pid}'. Nothing to close."); return 0
+    pt = mp.read_bytes()
+    K_p = os.urandom(32); nonce_p = os.urandom(NONCE_LEN)
+    ct = AESGCM(K_p).encrypt(nonce_p, pt, None)
+    ct_hash = hashlib.sha256(ct).hexdigest()
+    xp = _load_x25519(KEYS_DIR)
+    nonce_kek = os.urandom(NONCE_LEN)
+    kek = _derive_kek(xp, nonce_kek)
+    nonce_wrap = os.urandom(NONCE_LEN)
+    wrapped = AESGCM(kek).encrypt(nonce_wrap, K_p, None)
+    ed = _load_ed25519(KEYS_DIR)
+    m = _load_manifest()
+    old_blob = m.get("payloads",{}).get(pid,{}).get("blob", f"{pid}.enc")
+    entry = {
+        "payload_id": pid, "algo": ALGO, "ct_hash": ct_hash,
+        "nonce_p": nonce_p.hex(), "blob": old_blob,
+        "wrapped_key": wrapped.hex(), "nonce_kek": nonce_kek.hex(),
+        "nonce_wrap": nonce_wrap.hex(),
+        "pub_x25519": xp.public_key().public_bytes_raw().hex(),
+        "pub_ed25519": ed.public_key().public_bytes_raw().hex(),
+        "signature": "", "status": "sealed",
+    }
+    entry["signature"] = ed.sign(_sign_bytes(entry)).hex()
+    blob = VAULT_DIR / old_blob
+    tmp = blob.with_suffix(".enc.tmp"); tmp.write_bytes(ct); tmp.replace(blob)
+    m.setdefault("payloads",{})[pid] = entry; _save_manifest(m)
+    # Shred mirror: 3-pass overwrite
+    size = mp.stat().st_size
+    try:
+        with mp.open("r+b") as fh:
+            for _ in range(3):
+                fh.seek(0); fh.write(os.urandom(size)); fh.flush()
+    except OSError: pass
+    mp.unlink(missing_ok=True)
+    try: (mirror / pid).rmdir()
+    except OSError: pass
+    print(f"[ OK ] Closed and re-sealed: {pid}  (mirror shredded 3-pass)")
+    return 0
+
+
+def cmd_verify(args):
+    _require_crypto()
+    _, _, _, Ed25519PublicKey, _, _, _, InvalidSignature = _imp()
+    m = _load_manifest(); payloads = m.get("payloads", {})
+    fid = getattr(args, "payload_id", None)
+    to_check = {fid: payloads[fid]} if fid else payloads
+    if not to_check: print("[ OK ] Vault empty. Nothing to verify."); return 0
+    fails = 0
+    for pid, e in to_check.items():
+        ok = True
+        try:
+            ep = Ed25519PublicKey.from_public_bytes(bytes.fromhex(e["pub_ed25519"]))
+            ep.verify(bytes.fromhex(e["signature"]), _sign_bytes(e))
+        except InvalidSignature:
+            print(f"[FAIL] {pid}: Ed25519 signature invalid"); ok = False
+        except Exception as exc:
+            print(f"[FAIL] {pid}: sig error: {exc}"); ok = False
+        if ok:
+            blob = VAULT_DIR / e["blob"]
+            if not blob.exists():
+                print(f"[FAIL] {pid}: blob missing"); ok = False
+            elif hashlib.sha256(blob.read_bytes()).hexdigest() != e["ct_hash"]:
+                print(f"[FAIL] {pid}: hash mismatch"); ok = False
+        if ok: print(f"[ OK ] {pid}: sig+hash verified")
+        else: fails += 1
+    return 1 if fails else 0
+
+
+def cmd_list(args):
+    m = _load_manifest(); p = m.get("payloads", {})
+    if not p: print("Vault is empty."); return 0
+    print(f"+--- Vault Payloads ({len(p)}) " + "-"*28)
+    for pid, e in p.items():
+        flag = " <-- OPEN" if e.get("status") == "open" else ""
+        print(f"  {pid:<24}  {e.get('algo','?'):<14}  {e.get('status','?')}{flag}")
+    return 0
+
+
+def cmd_status(args):
+    m = _load_manifest(); p = m.get("payloads", {})
+    open_ct  = sum(1 for e in p.values() if e.get("status") == "open")
+    sealed   = len(p) - open_ct
+    yn = lambda f: "present" if Path(f).exists() else "MISSING"
+    print("+--- tritium-crypt status " + "-"*38)
+    print(f"  Vault dir       : {VAULT_DIR}")
+    print(f"  Manifest        : {yn(MANIFEST_PATH)}")
+    print(f"  Payloads total  : {len(p)}")
+    print(f"  Sealed          : {sealed}")
+    print(f"  Open (warn)     : {open_ct}")
+    print(f"  Keys dir        : {KEYS_DIR}")
+    print(f"  Ed25519 key     : {yn(KEYS_DIR / 'id.ed25519')}")
+    print(f"  X25519 wrap key : {yn(KEYS_DIR / 'wrap.x25519')}")
+    try:
+        from cryptography.hazmat.primitives.ciphers.aead import AESGCM  # noqa
+        print("  cryptography    : importable")
+    except ImportError:
+        print("  cryptography    : NOT INSTALLED  -- pip install cryptography")
+    return 0
+
+
+def main():
+    p = argparse.ArgumentParser(prog="tritium-crypt")
+    sub = p.add_subparsers(dest="command", required=True)
+    sub.add_parser("init")
+    sub.add_parser("list")
+    sub.add_parser("status")
+    ik = sub.add_parser("init-keys")
+    ik.add_argument("--force", action="store_true")
+    ps = sub.add_parser("seal")
+    ps.add_argument("payload_id"); ps.add_argument("input_path")
+    po = sub.add_parser("open")
+    po.add_argument("payload_id"); po.add_argument("--mirror-dir", default=None)
+    pc = sub.add_parser("close")
+    pc.add_argument("payload_id"); pc.add_argument("--mirror-dir", default=None)
+    pv = sub.add_parser("verify")
+    pv.add_argument("payload_id", nargs="?", default=None)
+    args = p.parse_args()
+    return {"init":cmd_init,"init-keys":cmd_init_keys,"seal":cmd_seal,"open":cmd_open,
+            "close":cmd_close,"verify":cmd_verify,"list":cmd_list,"status":cmd_status
+            }[args.command](args)
+
+if __name__ == "__main__":
+    sys.exit(main())

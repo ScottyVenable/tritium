@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Tritium OS v4.1 -- tritium-open
+# Decrypt a vault payload into .tritium_mirror/ for local editing.
+# Checks shield freshness. Logs to ledger. Never stages mirror paths.
+# Usage: tritium-open <payload-id>
+# See docs/SECURITY-tritium-crypt.md section 4.
+
+set -euo pipefail
+
+PAYLOAD_ID="${1:-}"
+[ -z "$PAYLOAD_ID" ] && { printf '[FAIL] Usage: tritium-open <payload-id>\n' >&2; exit 1; }
+
+TRITIUM_HOME="${TRITIUM_HOME:-$HOME/.tritium-os}"
+SHIELD_FILE="$TRITIUM_HOME/state/shield.ok"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+
+# Shield freshness check
+if [ -e "$SHIELD_FILE" ]; then
+    now=$(date +%s)
+    mtime=$(stat -c %Y "$SHIELD_FILE" 2>/dev/null || stat -f %m "$SHIELD_FILE" 2>/dev/null || echo "$now")
+    age=$(( now - mtime ))
+    if [ "$age" -gt 86400 ]; then
+        printf '[FAIL] Shield stale (%ds > 86400s). Run tritium-authorize then retry.\n' "$age" >&2
+        exit 2
+    fi
+    printf '[ OK ] Shield fresh (%ds old).\n' "$age"
+else
+    printf '[WARN] shield.ok absent (%s). Proceeding without shield check.\n' "$SHIELD_FILE"
+fi
+
+[ -f "$HERE/tritium-crypt" ] || { printf '[FAIL] tritium-crypt not found at %s\n' "$HERE/tritium-crypt" >&2; exit 3; }
+python3 "$HERE/tritium-crypt" open "$PAYLOAD_ID"
+RC=$?
+
+# Log event (best-effort)
+LEDGER_DB="${TRITIUM_LEDGER_DB:-$TRITIUM_HOME/ledger/ledger.db}"
+REPO_ROOT="$(cd "$HERE/.." && pwd)"
+if command -v python3 >/dev/null 2>&1 && [ -f "$LEDGER_DB" ]; then
+    python3 - <<INNERPY 2>/dev/null || true
+import sys; sys.path.insert(0, '$REPO_ROOT/bridge')
+try:
+    from tritium_bridge.ledger import Ledger
+    Ledger('$LEDGER_DB').log_event(kind='vault_open' if $RC==0 else 'vault_open_failed',
+        agent='system', payload={'payload_id':'$PAYLOAD_ID','rc':$RC})
+except Exception: pass
+INNERPY
+fi
+exit "$RC"

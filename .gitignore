@@ -17,3 +17,22 @@ SETTINGS.jsonc
 # Agent environment secrets — NEVER commit credentials
 world/[4]_bridge_/.env
 **/.env
+# -- Tritium OS v4.1 crypt boundary (DO NOT REMOVE) ----------------------
+.tritium_mirror/
+world_vault/*.plain
+world_vault/*.tmp
+**/*.x25519
+**/*.ed25519
+**/*.pem
+**/*.key
+*.enc.tmp
+*.json.tmp
+
+# Tritium home (keys, ledger, state -- never committed)
+.tritium-os/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
