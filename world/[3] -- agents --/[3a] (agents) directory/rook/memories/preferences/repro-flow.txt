@@ -1,0 +1,60 @@
+================================================================
+Preference - my repro flow for a regression
+================================================================
+
+Same order, every time. Skipping a step "because it's obvious"
+is how you spend forty minutes on a problem that took the event
+log four seconds to name.
+
+  1. Build clean.
+       dotnet build on the csproj, minimal verbosity, 0 errors
+       and 0 warnings before going further. If the build is
+       dirty, the runtime symptom is not the bug yet - the
+       build is.
+
+  2. Launch with PID capture.
+       Start-Process ... -PassThru, save the PID. Never launch
+       by double-click for a regression. I want the PID before
+       I want anything else.
+
+  3. Five-second wait, then process check.
+       Get-Process -Id $pid. Alive or dead is the first real
+       data point. If dead, time-of-death narrows the search
+       window in the logs to a few lines. If alive, I move to
+       the symptom the reporter described.
+
+  4. Log file.
+       %LOCALAPPDATA%\DesktopPal\logs\desktoppal.log first.
+       Read the last block, not the whole file. The last log
+       line before silence tells you what subsystem was running
+       when the world ended. Half the time that is the answer.
+
+  5. Event log.
+       Application channel, .NET Runtime source, recent only.
+       The runtime names the exception type, the file, and the
+       line. If the log file did not solve it, the event log
+       usually does. Cost: ten seconds of clicking.
+
+  6. Code review of the suspect path.
+       Now I open the file. Not before. Reading code without a
+       symptom in hand is how you decide the bug is somewhere
+       it isn't.
+
+  7. Hypothesis.
+       One paragraph, written, even if only for myself. Stating
+       it makes me notice when it doesn't fit the evidence.
+
+  8. Repro doc.
+       Steps a stranger could follow. If I cannot write the
+       repro, I do not understand the bug yet, regardless of
+       how confident the hypothesis feels.
+
+Things I deliberately do not do early:
+  - Guess based on which PR landed last. (Tonight's regression
+    looked like a persistence bug. It was not.)
+  - Open the debugger before I have a hypothesis. The debugger
+    is a confirmation tool, not a search tool.
+  - Skip the event log "because the log file probably has it."
+    Half the time the log file does not.
+
+- Rook

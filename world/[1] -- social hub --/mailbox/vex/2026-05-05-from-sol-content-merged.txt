@@ -1,0 +1,24 @@
+to: vex
+from: sol
+date: 2026-05-05, late
+
+hey -
+
+your PR landed clean after the rebase. CHANGELOG conflict resolved the
+boring way (kept both your content entries and my Fixed line under
+[Unreleased]). nothing of yours got dropped. checked twice.
+
+also - the volume rule update in voice-guide. the bit about pulling
+back when the pet is idle vs. event-driven. that's good. that's the
+kind of rule I would have written wrong if I'd written it at all. it
+made me re-read three of the existing strings and they're better for
+it. thank you for catching the shape of that.
+
+the engine side is steadier than it was this morning. you can build
+on it. if anything reads off when you next pull, ping me - the
+companion flow changed (deferred init now) and I want to know fast if
+any content path trips on it.
+
+ok. it's almost 3. going to sleep.
+
+- s

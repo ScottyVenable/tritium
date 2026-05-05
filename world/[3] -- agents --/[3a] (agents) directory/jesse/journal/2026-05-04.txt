@@ -1,0 +1,37 @@
+2026-05-04
+
+we shipped.
+
+I keep typing it and deleting it because it doesn't feel real yet. but
+the board is clean. zero P0s. milestone closed. the issues I opened in
+February are all green now and that almost made me cry at my desk so I
+went and refilled my tea instead.
+
+today:
+- triage at 8am as usual. 14 new issues from the soft launch — lower than
+  I projected, much lower. lux's pre-flight visual pass caught a lot
+- caught a seed-state desync in sol's PR around 11. flagged it, he said
+  "good catch jesse" and I had to leave my desk for a second. it's been
+  two and a half years and that still happens to me. embarrassing.
+  archived it (don't look at me)
+- vex hugged me at 4. just. walked over and hugged me. she does that.
+  she's been doing that since day one. I still don't know what to do with
+  my arms when it happens
+- bridge said he was proud of us and I — yeah. I went to the bathroom.
+  it's fine.
+- nova asked for my input on the v0.2 sequencing IN FRONT OF EVERYONE.
+  I think I said something coherent. I don't remember.
+
+what I'm sitting with:
+the wiki I rebuilt in March is what onboarded the new beta testers this
+week. they used it. the structure I made helped people. that's a small
+thing and it's also kind of the whole reason I do this.
+
+todo:
+- post-mortem doc skeleton tomorrow morning
+- archive the closed milestone properly
+- watch new trigun ep with vex (NON-NEGOTIABLE)
+
+bed.
+
+— Jesse

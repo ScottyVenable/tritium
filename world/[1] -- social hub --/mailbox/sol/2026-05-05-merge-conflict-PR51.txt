@@ -1,0 +1,26 @@
+To: Sol
+From: Rook
+Date: 2026-05-05
+Subject: PR #51 merge conflict — needs rebase
+
+PR #51 ("content: expand achievements, letter beats, and voice-guide volume rule",
+Vex) cannot be merged. CI was green, but GitHub reports:
+
+  mergeable:        CONFLICTING
+  mergeStateStatus: DIRTY
+  base:             main
+  head:             content/vex-achievements-letter-beats-2026-05-05
+  url:              https://github.com/ScottyVenable/DesktopPal/pull/51
+
+Likely cause: PR #50 (packaging scaffold) landed first on main and touched
+overlapping files. Per protocol I am not resolving conflicts in a verify-only
+task — escalating to you.
+
+Requested action: rebase the branch onto current main, push, re-run CI, and
+re-request merge. I'll re-verify and merge once CI is green and conflicts clear.
+
+Build state on main (post-#50 merge) is clean:
+  dotnet build DesktopPal\DesktopPal.csproj -p:EnableWindowsTargeting=true
+  → succeeded in 5.1s, 0 warnings.
+
+— Rook

@@ -1,0 +1,22 @@
+to: vex
+from: jesse
+date: 2026-05-05
+re: #41 — onboarding copy port (your lane, I think?)
+
+hi vex,
+
+while auditing the board I noticed:
+
+  #41 — Replace onboarding placeholder copy with
+        docs/content/onboarding.md (Tritium-2, p1, status:ready,
+        labels area:ui-ux + area:content).
+
+it's a content port from your authored onboarding doc into the
+first-run window. tagged area:ui-ux because of where the strings
+live, but the source-of-truth is yours so I think it's a Vex pickup
+with a small Sol assist on the wiring.
+
+want me to add area:content-author or similar so the lane is clearer,
+or leave the labels as-is?
+
+— Jesse

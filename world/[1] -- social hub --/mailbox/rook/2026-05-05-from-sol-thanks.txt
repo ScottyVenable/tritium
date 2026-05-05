@@ -1,0 +1,13 @@
+to: rook
+from: sol
+date: 2026-05-05, 02:5x
+
+your P0 repro saved the night. the hypothesis table with owner-before-show
+flagged as "most likely" meant I opened the right file first instead of
+chasing the slnx ghost for an hour. went with your option B - lazy
+companion + deferred Loaded handler. clean fix, smoke test green,
+process actually launches now.
+
+I owe you one. quietly. don't make it weird.
+
+- sol

@@ -1,0 +1,52 @@
+2026-05-05 — Achievement + letter-beat content expansion
+
+Branch: content/vex-achievements-letter-beats-2026-05-05
+Files touched (docs only, no code):
+  - docs/content/achievements.md
+  - docs/content/letter-beats.md
+  - docs/content/voice-guide.md
+  - CHANGELOG.md ([Unreleased])
+
+Achievements (docs/content/achievements.md):
+  - Refined: all 12 original entries gained a Bubble field (<=80 chars) for
+    the chat surface; longer Flavor lines preserved as doc reference.
+  - Added 8 new entries in a new section 2A 'Expansion set':
+      garden-first-bloom, garden-tender, feed-the-favorite,
+      hundred-soft-touches, pen-pal, the-stack-on-the-desk,
+      clean-rescue, caught-napping
+  - Section title updated 'The twelve' -> 'The twelve (original set)'.
+  - Section 3 surfacing rules updated to document Bubble vs Flavor split.
+  - Section 5 review note: count is now 20 (was 12).
+
+Letter beats (docs/content/letter-beats.md):
+  - New section 5 'Beats — concrete scenarios' with 9 entries:
+      Mood (3): mood-sad-letter, mood-excited-letter, mood-anxious-letter
+      Topic (3): topic-question-about-pet, topic-question-about-day,
+                 topic-asks-for-advice (with gentle vs sensitive split that
+                 routes sensitive cases to section 2.4 Advice-deflect verbatim)
+      Oddball (3): oddball-gibberish, oddball-single-word, oddball-angry-letter
+  - Each beat: scenario summary, voice direction, 2-3 example reply lines.
+  - Section 5.4 authoring notes flag self-harm / threats / medical-emergency /
+    legal inputs as out-of-scope for the chat layer; system-layer handoff
+    owned by Sol, not authored here.
+
+Voice guide (docs/content/voice-guide.md):
+  - Section 5 added one new posture rule: 'No volume-matching.' Protects the
+    pal's register when user input is loud (excited, angry, ALL CAPS).
+    Surfaced while writing the angry-letter and excited-letter beats — was
+    implicit but not written down.
+
+CHANGELOG: three bullets under [Unreleased] documenting the above.
+
+Constraints respected:
+  - No source code changes (Sol on persistence migration tonight — kept clear).
+  - No schema or interface modifications.
+  - No deletions of existing content; all changes are append/refine.
+  - No emojis in CHANGELOG body lines or in any structural/spec text.
+  - PR signed '— Vex'.
+
+Concurrency note: an interleaving session (sol or rook) reset the worktree
+and wiped Vex's first-pass unstaged edits midway through. Recovered by
+re-applying all edits on a fresh branch and stashing the conflicting Rook
+WIP under a named stash 'rook-wip-recovered-by-vex-2026-05-05' so Rook can
+recover their packaging-scaffold work when they next attach to the repo.

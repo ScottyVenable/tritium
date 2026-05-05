@@ -1,0 +1,50 @@
+2026-05-05 — Board sync after PR #45 + #46 (.tritium world wave)
+
+PRs verified merged on main:
+- #45 50f8f7f — .tritium team world mirrored into workspace
+- #46 ffafc90 — CHANGELOG note for the world-sync wave
+
+Project #11 board state (post-sync): in sync.
+- All closed issues already reflected as Done on board.
+- Opened #47 as a tracking card for the world-sync wave; closed
+  completed; set to Done on board.
+- No stale items. No status mismatches.
+
+Issue audit (open, n=23):
+- Epics (n=7): #13, #16, #19, #21, #24, #27, #29 — confirmed list
+  matches prior session.
+- Actionable (n=16): #1, #2, #12, #31, #32, #34, #35, #36, #37, #38,
+  #39, #40, #41, #42, #43, #44.
+- Every actionable issue has milestone + area + priority + status
+  labels. Coverage is clean.
+
+Milestone distribution (open):
+- Tritium-0 Structural Reset:    #13, #34, #42, #44
+- Tritium-1 Trustworthy Prototype: #16, #35
+- Tritium-2 Daily Driver Alpha:  #2, #12, #19, #31, #32, #36, #41
+- Tritium-3 Packaged Companion:  #21, #37
+- Tritium-4 Memory and Growth:   #24, #43
+- Tritium-5 Living Desktop:      #1, #27, #38, #40
+- Tritium-6 Companion Platform:  #29, #39
+
+Recommended next wave (per TRITIUM-PLAN-V2 Wave 4 "turn docs into code"):
+1. #44 Persistence migration to %LOCALAPPDATA% — P0, Sol
+2. #42 SimulationService fixed-step tick — P0, Sol (gates animation,
+   multi-pet, AI memory windows)
+3. #43 AI memory layers v1 — P1, Sol
+4. #36 Animation state machine — P2 but called out for Wave 4; needs
+   status:needs-design → status:ready promotion or a design sub-issue
+5. #37 Self-contained single-file publish + Release artifact — P1, Rook
+6. #32 Manual QA on companion panel + multi-monitor — P1, Rook
+
+Content / QA gaps:
+- #41 onboarding copy swap is a Vex-shaped content port from
+  docs/content/onboarding.md. Mailboxed.
+- #35 offline phrases port is partially shipped under Unreleased per
+  V2 §2; close-out check needed.
+- No new tracking issues required — V2 gaps are all already filed.
+
+Self-check: no CHANGELOG.md edits, no source code edits, no emojis,
+all touched issues retain full project field set.
+
+— Jesse

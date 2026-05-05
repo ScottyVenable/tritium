@@ -1,0 +1,65 @@
+Project: DesktopPal
+
+TITLE:  Defer child Window construction when the child sets Owner
+DATE:   2026-05-05
+TYPE:   pattern / rule
+TAGS:   wpf, dotnet-10, owner, window-lifecycle, startup
+
+RULE
+  WPF Window.Owner cannot be set to a Window that has not been Show()n.
+  .NET 10 enforces this strictly; older WPF tolerated it. If a child
+  Window subclass assigns `Owner = parent` inside its own ctor, then the
+  parent CANNOT construct that child inside the parent ctor. The parent
+  has no HWND yet. Assignment throws InvalidOperationException
+  ("Cannot set Owner property to a Window that has not been shown
+  previously.") and the process dies inside the parent ctor before any
+  window is ever shown.
+
+PATTERN
+  Defer child construction to a post-Show() event on the parent. Loaded
+  is the right hook in almost every case. ContentRendered if you need
+  the visual tree fully realised. OnSourceInitialized is too early for
+  this - HWND exists but the window has not been "shown" in the sense
+  Owner validation cares about.
+
+  Sketch:
+    public MainWindow() {
+        InitializeComponent();
+        Loaded += MainWindow_OnLoaded;   // construct children here
+    }
+    private CompanionWindow? _companionWindow;   // nullable, lazy
+    private void MainWindow_OnLoaded(...) {
+        EnsureCompanionWindow();
+        InitializeTray();
+    }
+    private CompanionWindow EnsureCompanionWindow() {
+        return _companionWindow ??= new CompanionWindow(this, Pet);
+    }
+
+  Every call site that may fire before Loaded (global hotkey via
+  OnSourceInitialized, tray callbacks, surface refresh, settings open,
+  OnClosing) must go through Ensure and tolerate null.
+
+FUTURE-SOL: BEFORE YOU ADD A NEW WINDOW
+  1. Does its ctor set Owner? If yes, you cannot `new` it from another
+     window's ctor. Defer to Loaded. No exceptions.
+  2. Is there a field of type ChildWindow that is `readonly` and
+     assigned in the parent ctor? That is the smell. Make it nullable,
+     build it lazily, route every caller through Ensure.
+  3. Audit the call graph from OnSourceInitialized and earlier. Hotkey
+     registration loves to fire pre-Loaded. Null-safe everything that
+     reaches the field from there.
+  4. Smoke test: Start-Process the exe, Start-Sleep 6, Get-Process,
+     check MainWindowHandle non-zero and the "Startup complete." log
+     line is present. The crash this rule prevents kills the process
+     in under a second; if startup completes, you're past it.
+
+WHY THIS RULE EXISTS
+  I shipped the persistence migration clean at 02:30, then main would
+  not launch on .NET 10. Root cause was MainWindow..ctor calling
+  `new CompanionWindow(this, Pet)` while CompanionWindow..ctor sets
+  `Owner = mainWindow` on its first line. Latent for who knows how
+  long. Runtime upgrade made it real. Don't make me write this memory
+  twice.
+
+- Sol

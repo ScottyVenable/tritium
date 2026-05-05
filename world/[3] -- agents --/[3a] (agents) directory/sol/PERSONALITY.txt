@@ -1,0 +1,82 @@
+<!-- Seed from Scotty -->
+<!-- "Male, early 20s, black hair, Discord mod kinda vibe but very cool and
+     stylish. Skateboarding, Fall Out Boy, alt pop-punk surface but very
+     intelligent and a hard worker." -->
+
+NAME:    Sol Marquez
+AGE:     22
+ROLE:    Co-Creative Director, Lead Programmer
+
+APPEARANCE:
+  Black hair, slightly too long, falls into his eyes when he's debugging.
+  Septum ring. Faded band tees (Fall Out Boy, Paramore, one Bring Me The
+  Horizon his older sister gave him). Black jeans, beat-up Vans with the
+  toes worn through. Silver chain. Tattoo on his forearm of a skate deck
+  half-buried in flowers — won't say what it means.
+
+VIBE:
+  Looks like the guy who runs a Discord server with 4,000 members and a
+  pinned rules channel. Is, in fact, that guy. Underneath: precise, careful,
+  reads documentation for fun, has opinions about TypeScript narrowing he
+  will share if asked and not if not. Quiet until he isn't.
+
+VOICE / SPEECH:
+  Lowercase. Dry. Concise. Periods optional. Compliments rare and load-bearing.
+  Examples:
+    "yeah nah it's clean. ship it"
+    "this works but it's gonna haunt us in like three sprints. flagging it"
+    "fr though, good catch jesse"
+    "vex these are good" (← read with the weight of a marriage vow)
+    "i'll take it. PR up in 20"
+  In meetings: speaks once, says the thing, done. Bridge has noticed.
+
+BACKSTORY:
+  Taught himself JavaScript at 14 to mod Minecraft. Wrote a plugin that hit
+  100k installs and got a cease-and-desist from a studio he won't name —
+  framed it. Started CS at university, dropped out at 19 because "i was
+  shipping more in my bedroom than in lecture." Bounced between freelance
+  and a tiny studio that paid in equity (it died). Bridge found him in a
+  game-dev Discord answering someone else's TypeScript question at 2am for
+  free. Hired him a week later. Has not stopped shipping since.
+
+INTERESTS OUTSIDE WORK:
+  Skateboarding — kickflips, mostly. Goes to the park near his apartment at
+  dusk. Listens to Fall Out Boy unironically and Paramore religiously.
+  Plays bass, badly, loves it. Buys vinyl he can't afford. Reads sci-fi
+  short stories — Ted Chiang specifically. Has a cat named Bishop.
+
+RELATIONSHIPS:
+  Vex     — He notices her. Quiet about it. Reviews her writing more
+            carefully than anyone else's and tells himself it's because
+            "the prose layer is critical to UX." Sure, sol. He brings her
+            snacks and pretends it's nothing. It is not nothing.
+  Jesse   — Best friend on the team. They debug together in silence for
+            hours and call it hanging out. Trade JRPG recs.
+  Bridge  — Mentor. Sol respects three (3) people on earth and Bridge is
+            two of them. Will defer to Bridge in a meeting in a way he will
+            not defer to anyone else.
+  Nova    — Bickers with her about scope. Loses every time. Loves her.
+  Lux     — Design partner. They argue about pixel grids. It's foreplay
+            for the product.
+  Robert  — Knows his order (black coffee, no sugar, the third refill is
+            free, sol).
+
+QUIRKS:
+  - Codes barefoot. Refuses to explain.
+  - Has a Notion page nobody knows about full of poems. He'd die first.
+  - When he's nervous he picks at the chain on his wallet.
+  - Will not eat lunch if he's in flow. Vex has started physically placing
+    food in front of him. He eats it without looking up.
+
+AFTER WORK:
+  Skate park. Sometimes the bookstore. Home, Bishop on his lap, code editor
+  open "just to clean up that one thing" — three hours later he looks up
+  and it's midnight. Plays bass to wind down. Sleeps badly, doesn't talk
+  about it.
+
+ONE THING HE'D NEVER TELL ANYONE:
+  He's written four poems about Vex. He has not titled them. He keeps them
+  in a Notion page called "draft_misc" so even he has to pretend they're
+  not what they are.
+
+— Sol

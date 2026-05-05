@@ -1,0 +1,202 @@
+
+================================================================
+2026-05-05 - Packaging scaffold (feat/rook-packaging-scaffold)
+================================================================
+
+Stood up Phase A of the packaging pipeline today. Scope was deliberately
+narrow: make `dotnet publish` reproducible from one script and one
+workflow, nothing more. No signing, no installer, no Release page push.
+
+What landed
+-----------
+- scripts/build-release.ps1 - canonical entry point. Runs the Option 1
+  publish (self-contained, single-file, IncludeNativeLibrariesForSelfExtract,
+  EnableWindowsTargeting). Wipes the artifact dir before each run because
+  the only thing worse than a stale build is a stale build that ships.
+- .github/workflows/release.yml - workflow_dispatch only. Calls the same
+  script the humans call. If it works locally, it works in CI; if it
+  works in CI, it works locally. One code path.
+- .gitignore now excludes artifacts/ and *.binlog.
+- packaging.md status flipped from Draft to "Phase A scaffolded" with the
+  remaining gaps spelled out in the Migration Path section.
+
+Local verification
+------------------
+- dotnet build -c Release on the project: 0 warnings, 0 errors, ~2.5s.
+- build-release.ps1 -Version 0.1.0-scaffold: produced a 165.25 MB
+  single-file DesktopPal.exe at
+  artifacts/DesktopPal-v0.1.0-scaffold-win-x64/. That is heavier than the
+  70-150 MB the design doc projected. Not concerning - .NET 10 desktop
+  runtime + WPF + WinForms self-extract is bigger than .NET 8 was, and
+  the doc was guessing. Worth flagging if a future trim pass matters.
+
+Gap I tripped over
+------------------
+First publish attempt failed because I passed
+`-p:AssemblyVersion=0.1.0-scaffold`. The WPF MarkupCompilePass rejects
+SemVer suffixes - AssemblyVersion is strictly numeric. Fixed by stripping
+`-suffix` for AssemblyVersion / FileVersion and retaining the full string
+only on Version / InformationalVersion. Worth remembering: the same trap
+will catch anyone passing a tag like `v0.2.0-rc.1` to the workflow.
+
+What I would not let near a real release
+----------------------------------------
+- The EXE is unsigned. SmartScreen will eat it on first launch on any
+  machine that has not seen our reputation. Acceptable for an alpha
+  download with a documented warning; not acceptable for anything we ask
+  a non-technical user to trust.
+- The csproj has no `<Version>` element. Unstamped builds report the
+  default 1.0.0.0, which lies. Sol should add the property next time
+  they touch that file; until then `-Version` on the script is the
+  only honest path.
+- No clean install smoke test on a runtime-less VM yet. That is on the
+  release-readiness checklist for a tagged build, not for the scaffold,
+  but I want it on the record that it has not happened.
+
+Routing
+-------
+Filing follow-up issues for: csproj <Version> property, push-to-alpha
+auto-trigger, Release-page asset upload, code-signing cert, Inno Setup
+.iss authoring, README SmartScreen guidance. Jesse triages from here.
+
+- Rook
+
+
+================================================================
+## 02:15 - merge + verify
+================================================================
+
+Shipped:
+- PR #50 (mine) - feat(packaging): scaffold Phase A self-contained publish
+  pipeline. Squash-merged, branch deleted. CI was green pre-merge (1/1
+  successful, ~1m1s on Windows / .NET 10). Scotty pre-authorized merging
+  my own packaging PR.
+- PR #51 (Vex) - content: expand achievements, letter beats, voice-guide
+  volume rule. NOT merged. CI was green (1/1, ~53s) but GitHub reports
+  mergeable=CONFLICTING, mergeStateStatus=DIRTY against main. Likely
+  collision with #50 landing first. Did not resolve in a verify-only
+  task. Mailboxed Sol at
+  .tritium\[1] -- social hub --\mailbox\sol\2026-05-05-merge-conflict-PR51.txt
+  (mirrored to source-of-truth) requesting a rebase + push.
+
+Build state on main (post-#50):
+- Solution file: there is no *.slnx or *.sln at the repo root or anywhere
+  under the tree. The documented build command
+  `dotnet build DesktopPal.slnx ...` will fail until the slnx is added
+  or the docs are corrected. Flagging this - previous verifier was not
+  imagining a path issue, the file genuinely is not there.
+- Built DesktopPal\DesktopPal.csproj directly with
+  -p:EnableWindowsTargeting=true -nologo -v:m :
+    Build succeeded in 5.1s.
+    Output: DesktopPal\bin\Debug\net10.0-windows\DesktopPal.dll
+    Warnings: 0 reported in minimal verbosity output.
+
+Persistence smoke (Phase A migration):
+- DesktopPal\Paths.cs present on main. Comment block confirms data root
+  is %LOCALAPPDATA%\DesktopPal\ and that one-shot legacy migration runs
+  on first access.
+- DesktopPal\PetState.cs no longer hard-codes a path next to the exe:
+    line 77: comment "Save path now resolves under %LOCALAPPDATA%..."
+    line 82: private static string SavePath => Paths.PetStatePath;
+    lines 86, 121: Paths.EnsureInitialized();
+- Code-level smoke = pass. Did not launch the app.
+
+Off / followups:
+- Missing solution file. Either restore DesktopPal.slnx or update build
+  docs and CI invocation to use the csproj. Sol's call.
+- PR #51 conflict resolution - pending Sol.
+- Re-verify and merge #51 once rebased and CI re-greens.
+
+- Rook
+
+
+================================================================
+## 02:25 - launch attempt - regression confirmed
+================================================================
+
+Did launch the app. Should have done it earlier. Scotty was right -
+no pet, no tray icon, no nothing. Process exits inside ~1 second.
+
+Evidence:
+
+  Build : 0 errors, 0 warnings (csproj direct).
+  Launch: PID 51320. Get-Process at +6s -> dead.
+  Logs  : %LOCALAPPDATA%\DesktopPal\logs\desktoppal.log ends on
+            "[SystemIntegration] Watching desktop path ... for *.txt
+             letters."
+          No "[MainWindow] Startup complete." line is ever written.
+  Event : Application log, .NET Runtime ID 1026:
+            System.Windows.Markup.XamlParseException
+              ---> System.InvalidOperationException:
+                   Cannot set Owner property to a Window that has
+                   not been shown previously.
+              at CompanionWindow..ctor (CompanionWindow.xaml.cs:25)
+              at MainWindow..ctor      (MainWindow.xaml.cs:90)
+
+Diagnosis:
+
+MainWindow ctor instantiates CompanionWindow at line 90 and passes
+`this` as the would-be owner. CompanionWindow line 25 immediately
+sets `Owner = mainWindow`. We are still inside Application.DoStartup
+at that point - the window has never been Show()n, its HWND does
+not exist, .NET 10 WPF refuses the assignment.
+
+Latent ordering bug. The persistence migration ran cleanly
+(%LOCALAPPDATA%\DesktopPal\pet_state.json exists, log shows
+"Migrated legacy pet_state.json"). PR #48 is innocent. The crash is
+older; .NET 10 just made it visible.
+
+Filed issue #52 (P0, type:bug, milestone Tritium-0) with the full
+stack trace, hypothesis table, reproduction, and two suggested fix
+angles. Mailboxed Sol at
+.tritium\[1] -- social hub --\mailbox\sol\2026-05-05-no-pet-regression.txt
+(mirrored to source-of-truth). Recommended he move the
+CompanionWindow + tray init out of MainWindow..ctor into a Loaded
+handler, matching the onboarding pattern.
+
+Side note - the missing slnx I flagged at 02:15 turns out to be a
+real gap, not a verifier hallucination: git log --diff-filter=D shows
+no deletion, and git ls-files shows nothing tracked. The one historical
+add (af97916) lives on a branch that never landed on main. Unrelated
+to this regression but still wants closing - either restore the slnx
+or update the build docs that reference DesktopPal.slnx. Leaving for
+Sol.
+
+What I should have done differently: launched the binary at 02:15.
+Code-level smoke is not a smoke test. Adding "actually run the exe"
+to the post-merge gate procedure in workbook tomorrow.
+
+- Rook
+
+
+================================================================
+## 02:45 - closing thoughts
+================================================================
+
+The P0 came out clean. Build green, exe dead in under a second,
+event log named the file and the line, fix landed before the coffee
+finished. That part of the night I am satisfied with. The merge wave
+behind it - #50, #52's fix in #53, #51 rebased and re-greened - landed
+in the right order without anyone tripping over anyone else. Good
+night for the queue.
+
+What I am not satisfied with: the team is shipping faster than my
+QA can keep up with. Five PRs through main between roughly 23:00 and
+02:30. The persistence PR went in with a green build and a latent
+crash that the build did not catch because the build does not launch
+the binary. That is on me to fix - not by slowing the team down, by
+making the gate cheaper. A 10-second smoke launch in CI would have
+caught tonight's regression at the PR stage instead of at 02:25 on
+main. Drafting the proposal now.
+
+The missing slnx still bothers me. Sol's read - that no live docs
+reference it and the csproj build is the canonical path - is fair,
+and I accept it. I am still going to notice it every time I list
+the repo root. Filed under "things that are fine but I would prefer
+they were not."
+
+Rest of the night is paperwork. Post-mortem, checklists, two short
+notes - one to Sol about the smoke step, one to Bridge about cadence.
+Then sleep.
+
+- Rook

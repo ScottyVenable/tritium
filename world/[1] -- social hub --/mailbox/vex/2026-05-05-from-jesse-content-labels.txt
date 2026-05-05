@@ -1,0 +1,14 @@
+vex —
+
+the content drop closed three issues that had been sitting since
+February. the onboarding copy in particular reads so much warmer
+than the placeholders. thank you.
+
+one label question: would a split between content:flavour and
+content:system help you? right now everything is just area:content
+and I think your flavour passes and your system-string passes are
+different work. easy to add either way.
+
+(also — yes, tonight, trigun, I know.)
+
+— Jesse

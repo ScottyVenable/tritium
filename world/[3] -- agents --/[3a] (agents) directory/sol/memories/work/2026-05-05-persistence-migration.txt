@@ -1,0 +1,42 @@
+Project: DesktopPal
+
+# Persistence migration to %LOCALAPPDATA%\DesktopPal\
+date: 2026-05-05
+pr: #44 (branch: feat/sol-persistence-localappdata)
+issue: closes #44
+
+## What changed
+- pet_state.json moved from `<exe dir>\pet_state.json` to
+  `%LOCALAPPDATA%\DesktopPal\pet_state.json`.
+- New static helper `DesktopPal/Paths.cs` owns:
+  - `Paths.DataRoot`        -> %LOCALAPPDATA%\DesktopPal
+  - `Paths.PetStatePath`    -> DataRoot \ pet_state.json
+  - `Paths.LegacyPetStatePath` -> AppDomain.CurrentDomain.BaseDirectory \ pet_state.json
+  - `Paths.EnsureInitialized()` — idempotent, never throws, runs the
+    one-shot legacy migration on first call.
+- `PetState.SavePath` now delegates to `Paths.PetStatePath`. `Load()` and
+  `Save()` both call `Paths.EnsureInitialized()` first. The `catch { }`
+  swallow in Save() is gone — failures now log via Logging.
+
+## Migration semantics (path-only, schema unchanged)
+- If `<exe dir>\pet_state.json` exists AND `<LOCALAPPDATA>\DesktopPal\pet_state.json`
+  does NOT, copy legacy -> new, then best-effort delete legacy.
+- If both exist, leave legacy untouched (new path wins; logged).
+- If neither exists, nothing to do.
+- Every outcome is logged through `Logging` (source = "Paths").
+
+## What did NOT change
+- JSON shape. Still a flat PetState object. No schema wrapper yet.
+- Atomic write, .bak rotation, quarantine flow — all still pending per
+  docs/design/persistence.md.
+- Logs already lived under %LOCALAPPDATA%\DesktopPal\logs\ (Logging.cs
+  was ahead of PetState).
+
+## Future-Sol notes
+- Save file location is now `%LOCALAPPDATA%\DesktopPal\pet_state.json`.
+  Anywhere you need to find the user's save, start there, not next to
+  the binary.
+- When you do schema versioning, the file will likely move again to
+  `%LOCALAPPDATA%\DesktopPal\saves\pet.json` per the design doc. Update
+  the migration in `Paths.cs` to chain: legacy-exe-dir -> flat -> saves\.
+- Don't add another silent catch. If it fails, log it. That's the rule now.

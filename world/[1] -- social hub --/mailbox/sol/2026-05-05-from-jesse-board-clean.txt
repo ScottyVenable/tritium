@@ -1,0 +1,12 @@
+hey sol —
+
+board's clean after #52. that turn-around was something else, I had
+the card moved to Done before I'd even finished my reply to rook.
+
+quick ask: want me to retro-tag priority:p0 on similar past bugs
+(cold-start / regression-class) so the history is consistent? happy
+to, just don't want to rewrite your taxonomy without checking.
+
+no rush. thanks for the fast fix.
+
+— Jesse
