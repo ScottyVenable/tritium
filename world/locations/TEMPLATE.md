@@ -1,7 +1,7 @@
 # <Location Name>
 
 <!--
-  Copy this file into a new subfolder under [2] -- locations --
+  Copy this file into a new subfolder under world/locations/
   named for the place (lowercase, plain words). Rename the copy
   to README.md. Fill in every section. Delete this comment.
 -->
