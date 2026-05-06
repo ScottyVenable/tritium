@@ -64,7 +64,30 @@ tritium/
 
 ## Quickstart
 
-### 1. Install an adapter into your repo
+### 1. Install Tritium
+
+The unified installer detects your platform, checks requirements (Node 20+, Python 3.11+, git), sets up `~/.tritium-os/`, and ensures all 9 agent mailboxes exist. It is idempotent and non-invasive by default.
+
+```bash
+# Check what's needed (no install)
+bash scripts/install.sh
+
+# Install missing deps + your choice of adapter CLIs
+bash scripts/install.sh --install-deps --with-claude --with-gemini --with-copilot
+
+# Windows
+powershell scripts/install.ps1 -InstallDeps -WithClaude -WithGemini -WithCopilot
+```
+
+Useful flags: `--profile core|full`, `--with-lmstudio` (detect-only), `--dry-run`, `--force`, `--quiet`. `scripts/setup.sh` is now a deprecation wrapper that forwards to `install.sh`.
+
+Verify the install at any time:
+
+```bash
+bash scripts/verify.sh
+```
+
+### 2. Drop an adapter into a target repo
 
 | Environment | Shell | Command |
 |---|---|---|
@@ -75,7 +98,9 @@ tritium/
 | OpenAI / LM Studio | bash | `cd adapters/openai-lmstudio && npm i && npm run start` |
 | Any of the above | PowerShell | Replace `scripts/install-adapter.sh` with `scripts\install-adapter.ps1` |
 
-### 2. Start the live coordination layer
+The top-level `install.sh` / `install.ps1` also auto-delegate to `install-adapter.*` when `--target`/`--adapter` is passed, so older invocations keep working.
+
+### 3. Start the live coordination layer
 
 ```bash
 cd runtime/server

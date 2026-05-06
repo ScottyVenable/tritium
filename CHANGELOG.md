@@ -6,34 +6,44 @@ Versioning: Semantic Versioning (https://semver.org/).
 
 ## [Unreleased]
 
+Tritium-OS unification (Phases A–D): repo layout flattened, install/verify
+scripts unified, all 9 agents brought to full adapter + mailbox + inbox-protocol
+parity, and the documentation aligned with the new structure.
+
 ### Added
-- **Unified install scripts (Phase B of unification plan).**
+- **Unified install scripts (Phase B).**
   - `scripts/install.sh` -- canonical bootstrapper for Bash (Linux/macOS/Termux).
   - `scripts/install.ps1` -- PowerShell mirror for Windows.
   - Default behaviour is non-invasive: detect platform, check requirements (Node 20+, Python 3.11+, git), set up `~/.tritium-os/{bin,state,keys,ledger}`, init the ledger DB, copy utility scripts to `bin/`, ensure all 9 agent mailboxes exist under `world/social/mailbox/`, and print a summary block.
   - Opt-in flags: `--install-deps` (apt/dnf/pacman/brew/pkg/winget), `--with-claude`, `--with-gemini`, `--with-copilot`, `--with-lmstudio` (detect-only -- never installs the desktop app), `--profile core|full`, `--dry-run`, `--force`, `--quiet`.
   - Idempotent: existing files compared and backed up as `.bak` unless `--force`.
 - `scripts/install-adapter.sh` / `scripts/install-adapter.ps1` -- the previous per-repo adapter installer, renamed for clarity. The new `install.sh` / `install.ps1` auto-delegate when `--target`/`--adapter` (or `-Target`/`-Adapter`) is detected, so existing callers keep working.
+- **File mailboxes (Phase C).** `world/social/mailbox/<agent>/` directories for all 9 agents (bridge, sol, jesse, vex, rook, robert, lux, nova, scout) with `.gitkeep` placeholders so the layout survives a fresh clone.
+- **Inbox Protocol (Phase C).** New `## Inbox Protocol` section in every canonical `agents/<name>/agent.md`, mirrored to all 27 adapter prompt files (3 adapters × 9 agents). Documents check cadence, file-mailbox fallback, and reply etiquette.
+- **Scout adapter coverage (Phase C).** Scout now has prompts in `claude-cli` and `github-copilot-local` adapters (previously `gemini-cli` only); all 9 agents now have full 3-adapter coverage.
+- **Agent metadata (Phase C).** YAML frontmatter added to `agents/scout/agent.md`; tool specs added to `agents/{robert,lux,nova}/agent.md` so all 9 agent.md files share the same shape.
+- **`tritium inbox check` file-mailbox fallback (Phase C).** When the runtime API at `localhost:7330` is unreachable, the CLI lists unread items from `world/social/mailbox/<agent>/` instead of erroring out.
+- **`scripts/verify.{sh,ps1}` expanded (Phase D).** Now checks Node 20+ / Python 3.11+ / git; full repo structure; all 9 mailboxes; all 9 `agent.md` files; full adapter coverage (3 × 9 = 27 prompts); and runs an inbox CLI smoke test.
 
 ### Changed
-- `scripts/setup.sh` is now a thin deprecation wrapper that execs `install.sh`.
-- `README.md` and `docs/usage-*.md` updated to reference `install-adapter.sh` / `install-adapter.ps1` for adapter-into-target-repo workflows.
-- **Repo reorganization (Phase A of unification plan).** Top-level layout flattened to reduce nesting:
-  - `core/runtime/` → `runtime/` (Node/TS server, dashboard SPA, CLI, schemas now live at root).
-  - `mobile-environment/` → `scripts/mobile/` (Termux/Android helpers grouped under `scripts/`).
-  - All internal references in scripts (`scripts/package.sh`, `scripts/verify.sh`), docs (`docs/architecture.md`, `docs/troubleshooting.md`, `docs/usage-*.md`), and `README.md` updated to the new paths.
+- **Repo reorganization (Phase A).** Top-level layout flattened to reduce nesting:
+  - `core/runtime/` → `runtime/` (Node/TS server, dashboard SPA, CLI, schemas now at root).
   - `core/heartbeat/` → `runtime/heartbeat/` (live service alongside the Node server).
   - `core/registry/` → `data/registry/` (data, not code).
-  - Empty `core/` directory removed; references in `AGENTS.md`, `README.md`, and `docs/` updated.
-  - Top-level after Phase A: `adapters/`, `agents/`, `data/`, `docs/`, `runtime/`, `scripts/`, `world/`, plus root files.
+  - `mobile-environment/` → `scripts/mobile/` (Termux/Android helpers grouped under `scripts/`).
+  - `bridge/` → `heartbeat/`; world bracket-named folders normalized to `social/`, `locations/`, `crew/`, `bridge-workspace/`.
+  - All internal references in scripts (`scripts/package.sh`, `scripts/verify.sh`), docs, and `README.md` updated to the new paths.
+  - Top-level after Phase A: `adapters/`, `agents/`, `data/`, `docs/`, `heartbeat/`, `runtime/`, `scripts/`, `world/`, plus root files.
+- `scripts/install.{sh,ps1}` (the old adapter-copy installer) renamed to `scripts/install-adapter.{sh,ps1}`. The new top-level `install.{sh,ps1}` auto-delegates when `--target`/`--adapter` is passed, preserving backward compatibility.
+- `scripts/setup.sh` is now a thin deprecation wrapper that forwards all args to `install.sh`.
+- `scripts/new-agent.ps1` now scaffolds `claude-cli` + `gemini-cli` + `github-copilot-local` adapter prompts (was missing `copilot-local`); matches `new-agent.sh`.
+- `world/crew/README.txt` -- removed `instructions/` section; updated "ADDING A NEW AGENT" checklist to point to `agents/<name>/`; added explicit note that runtime definitions live in `agents/`, not here.
+- `world/crew/directory/TEMPLATE.md` -- updated cross-reference from `world/crew/instructions/<Name>.agent.md` to `agents/<name>/agent.md`.
+- `README.md` -- install section now leads with the unified `scripts/install.sh` entrypoint; clarified `agents/` vs `world/` two-layer split (core/runtime/technical vs living world).
 
 ### Removed
-- `world/crew/instructions/` — held `.agent.md` files that duplicated `agents/<name>/agent.md`. Under Option B, `agents/` is the sole core/runtime/technical layer and `world/crew/` is the living world layer. Diff confirmed no unique content in `world/crew/instructions/`; those copies carried encoding artifacts (`ΓÇö`/`ΓåÆ`) already fixed in `agents/`.
-
-### Changed
-- `world/crew/README.txt` — removed `instructions/` section; updated "ADDING A NEW AGENT" checklist to point to `agents/<name>/`; added explicit note that runtime definitions live in `agents/`, not here.
-- `world/crew/directory/TEMPLATE.md` — updated cross-reference from `world/crew/instructions/<Name>.agent.md` to `agents/<name>/agent.md`.
-- `README.md` — clarified `agents/` and `world/` component descriptions to reflect the two-layer split (core/runtime/technical vs living world).
+- Empty `core/` directory (Phase A).
+- `world/crew/instructions/` -- duplicated `agents/<name>/agent.md`; under the two-layer split, `agents/` is the sole runtime/technical layer and `world/crew/` is the living world layer. Diff confirmed no unique content; the duplicates also carried encoding artifacts (`ΓÇö`/`ΓåÆ`) already fixed in `agents/`. (Reaffirmed -- cleared in an earlier PR.)
 
 ## [4.1.0]-- 2026-01-02 -- Omni-Refactor
 
