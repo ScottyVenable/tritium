@@ -6,7 +6,8 @@
   "description": "Tritium runtime: SQLite message bus, REST + WebSocket API, dashboard server, CLI.",
   "main": "src/index.js",
   "bin": {
-    "tritium": "./cli/tritium.js"
+    "tritium-os": "../cli/tritium.js",
+    "tritium": "../cli/tritium.js"
   },
   "scripts": {
     "start": "node src/index.js",
