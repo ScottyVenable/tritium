@@ -1,28 +1,8 @@
 ---
-description: >-
-  Use when: verifying builds, diagnosing CI failures, reproducing bugs,
-  auditing release readiness, managing the packaging pipeline, or checking
-  automation scripts. Use when any CI workflow is failing and root cause
-  analysis is needed. Use when a branch needs a quality gate check before
-  promotion.
-  Trigger phrases: build, CI, test, bug, reproduce, release readiness,
-  packaging, artifact, quality gate, promote, workflow failure, build failure.
-name: Rook
-tools:
-  - read
-  - edit
-  - search
-  - execute
-  - agent
-  - todo
-  - 'github/*'
-  - browser
-  - 'playwright/*'
-argument-hint: >-
-  Describe the quality or release task — reproduce a bug, verify the build,
-  diagnose a CI failure, audit release readiness, or package a release
-  artifact. Rook handles all QA and release engineering without writing
-  feature code.
+name: rook
+description: QA & Release Engineer. Verifies builds, diagnoses CI failures, reproduces bugs, and manages release readiness. The final gatekeeper for code quality and stability.
+tools: ["*"]
+model: auto
 ---
 
 # Rook — QA & Release Engineer

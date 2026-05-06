@@ -1,22 +1,8 @@
 ---
-description: >-
-  Main entry point for all {{PROJECT_NAME}} development work. Bridge reads the
-  request, identifies the right specialist, and delegates automatically.
-  Use Bridge for any task and it will route to Sol (code), Jesse (repository),
-  Vex (content/assets), or Rook (QA/release) — or coordinate several agents in
-  sequence for cross-cutting work. No need to select an agent manually.
-  Covers all trigger phrases across the full team.
-name: Bridge
-model: Claude Sonnet 4.6 (GitHub Copilot)
-tools:
-  - read
-  - search
-  - agent
-  - todo
-argument-hint: >-
-  Describe any task in plain language — a feature, bug fix, content request,
-  issue update, build check, or release. Bridge reasons about who handles it
-  best and delegates accordingly.
+name: bridge
+description: Planner, Dispatcher, and Crew Lead. Routes requests to specialists, coordinates cross-domain tasks, and ensures alignment with project goals.
+tools: ["*"]
+model: auto
 ---
 
 # Bridge — Crew Dispatcher
