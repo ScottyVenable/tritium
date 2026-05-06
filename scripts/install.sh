@@ -302,6 +302,43 @@ for s in $V41_SCRIPTS $HELPER_SCRIPTS; do
     _copy_one "$s"
 done
 
+# --- npm install (runtime/server) -------------------------------------------
+_log ""
+_log "[3.5/5] Node dependencies (runtime/server)"
+SERVER_DIR="$REPO_ROOT/runtime/server"
+NODE_MODULES_DIR="$SERVER_DIR/node_modules"
+if [ "$NODE_STATUS" = "OK" ] && command -v npm >/dev/null 2>&1; then
+    if [ -d "$NODE_MODULES_DIR" ] && [ "$FORCE" -eq 0 ]; then
+        _log "  exists  $NODE_MODULES_DIR"
+    else
+        _log "  running npm install in $SERVER_DIR"
+        if [ "$DRY" -eq 0 ]; then
+            cd "$SERVER_DIR"
+            # Attempt 1: standard install
+            if npm install --loglevel warn >/dev/null 2>&1; then
+                _log "  ok      npm install"
+            else
+                # Attempt 2: build from source (helps on Termux / proot-Ubuntu where
+                # prebuilt better-sqlite3 binaries are not available)
+                _warn "Standard npm install failed; retrying with --build-from-source"
+                if npm install --build-from-source --loglevel warn >/dev/null 2>&1; then
+                    _log "  ok      npm install --build-from-source"
+                else
+                    _warn "npm install failed. Build tools may be missing."
+                    _warn "  Ubuntu/proot : sudo apt install build-essential python3 libsqlite3-dev"
+                    _warn "  Termux       : pkg install clang make python"
+                    _warn "  Then re-run  : bash install.sh --install-deps"
+                fi
+            fi
+            cd "$HERE"
+        else
+            _log "  [dry] npm install in $SERVER_DIR"
+        fi
+    fi
+else
+    _warn "Node 20+ or npm not found; skipping npm install"
+fi
+
 # --- agent mailboxes --------------------------------------------------------
 _log ""
 _log "[4/5] Agent mailboxes -> $MAILBOX_ROOT"
