@@ -45,7 +45,7 @@ Tritium is a coordination layer over a small, local-first runtime.
 
 ## Schemas
 
-JSON Schema documents are in `core/runtime/schemas/`:
+JSON Schema documents are in `core/core/runtime/schemas/`:
 
 - `im.json` — IM message envelope.
 - `email.json` — email envelope (with attachments).

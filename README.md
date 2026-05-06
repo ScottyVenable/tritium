@@ -159,7 +159,7 @@ See [docs/settings-reference.md](docs/settings-reference.md) for every key and i
 
 MIT — see [LICENSE](LICENSE).
 
-See [world/social/team/TEAM.md](world/social/team/TEAM.md) for the full handoff matrix and interaction patterns.
+See [world/social/world/social/team/TEAM.md](world/social/world/social/team/TEAM.md) for the full handoff matrix and interaction patterns.
 
 ## Live coordination layer
 
@@ -200,7 +200,7 @@ Add a new agent in one command:
 bash scripts/new-agent.sh <name> "<role-description>"
 ```
 
-This scaffolds `agents/<name>/`, registers it in `world/social/team/TEAM.md`, adds a settings stub, and prepares prompts for each adapter.
+This scaffolds `agents/<name>/`, registers it in `world/social/world/social/team/TEAM.md`, adds a settings stub, and prepares prompts for each adapter.
 
 ## Pre-release
 
