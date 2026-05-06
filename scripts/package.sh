@@ -9,7 +9,7 @@ here="$(cd "$(dirname "$0")" && pwd)"
 root="$(cd "$here/.." && pwd)"
 cd "$root"
 
-VERSION="$(grep -oE '"version"\s*:\s*"[^"]+"' core/runtime/server/package.json | head -1 | sed 's/.*"version"\s*:\s*"//;s/"$//')"
+VERSION="$(grep -oE '"version"\s*:\s*"[^"]+"' runtime/server/package.json | head -1 | sed 's/.*"version"\s*:\s*"//;s/"$//')"
 [[ -z "$VERSION" ]] && VERSION="0.1.0"
 
 dist="$root/dist"

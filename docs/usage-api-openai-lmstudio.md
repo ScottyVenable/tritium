@@ -42,7 +42,7 @@ Need a one-paragraph fragment for the loading screen, register: dry-witty.
 ## Live coordination
 
 ```bash
-cd /path/to/tritium/core/runtime/server && npm i && npm start
+cd /path/to/tritium/runtime/server && npm i && npm start
 ```
 
 The runner will fail-soft if the runtime isn't running — IMs simply won't be delivered, and the agent's text output is preserved verbatim.

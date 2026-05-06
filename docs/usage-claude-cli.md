@@ -19,7 +19,7 @@ This installs:
 ## Live coordination
 
 ```bash
-cd /path/to/tritium/core/runtime/server && npm i && npm start
+cd /path/to/tritium/runtime/server && npm i && npm start
 ```
 
 Tell Claude things like:

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Tritium OS v4.1 -- mobile-environment/configs/bashrc.sh
+# Tritium OS v4.1 -- scripts/mobile/configs/bashrc.sh
 # Source this from ~/.bashrc on Termux / Android to activate the Tritium CLI.
 # Designed for Android shared storage constraints: no POSIX chmod, safe paths.
 

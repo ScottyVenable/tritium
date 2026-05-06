@@ -48,8 +48,9 @@ tritium/
 │   ├── claude-cli/
 │   ├── gemini-cli/
 │   └── openai-lmstudio/
-├── core/runtime/                # Node/TS server · dashboard SPA · CLI · JSON schemas
-├── core/heartbeat/              # Python service — keeps the world alive between sessions
+├── runtime/                # Node/TS server · dashboard SPA · CLI · JSON schemas
+├── core/heartbeat/         # Python service — keeps the world alive between sessions
+├── core/registry/          # Authoritative tier/model registry and credit ledger
 ├── world/                  # Living world layer — crew journals, personalities, mailbox, locations
 ├── team/                   # Roster · handoff matrix · correspondence · decision traces
 ├── docs/                   # Architecture · usage guides · settings reference · troubleshooting
@@ -77,7 +78,7 @@ tritium/
 ### 2. Start the live coordination layer
 
 ```bash
-cd core/runtime/server
+cd runtime/server
 npm install
 npm start
 # Dashboard: http://localhost:7330
