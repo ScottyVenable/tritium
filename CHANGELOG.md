@@ -11,8 +11,10 @@ Versioning: Semantic Versioning (https://semver.org/).
   - `core/runtime/` → `runtime/` (Node/TS server, dashboard SPA, CLI, schemas now live at root).
   - `mobile-environment/` → `scripts/mobile/` (Termux/Android helpers grouped under `scripts/`).
   - All internal references in scripts (`scripts/package.sh`, `scripts/verify.sh`), docs (`docs/architecture.md`, `docs/troubleshooting.md`, `docs/usage-*.md`), and `README.md` updated to the new paths.
-  - `core/heartbeat/` and `core/registry/` left in place pending a follow-up decision; `core/` is no longer a wrapper for the Node runtime.
-  - Top-level after Phase A: `adapters/`, `agents/`, `core/` (heartbeat + registry only), `data/`, `docs/`, `runtime/`, `scripts/`, `world/`, plus root files.
+  - `core/heartbeat/` → `runtime/heartbeat/` (live service alongside the Node server).
+  - `core/registry/` → `data/registry/` (data, not code).
+  - Empty `core/` directory removed; references in `AGENTS.md`, `README.md`, and `docs/` updated.
+  - Top-level after Phase A: `adapters/`, `agents/`, `data/`, `docs/`, `runtime/`, `scripts/`, `world/`, plus root files.
 
 ### Removed
 - `world/crew/instructions/` — held `.agent.md` files that duplicated `agents/<name>/agent.md`. Under Option B, `agents/` is the sole core/runtime/technical layer and `world/crew/` is the living world layer. Diff confirmed no unique content in `world/crew/instructions/`; those copies carried encoding artifacts (`ΓÇö`/`ΓåÆ`) already fixed in `agents/`.

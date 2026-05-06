@@ -49,8 +49,8 @@ tritium/
 │   ├── gemini-cli/
 │   └── openai-lmstudio/
 ├── runtime/                # Node/TS server · dashboard SPA · CLI · JSON schemas
-├── core/heartbeat/         # Python service — keeps the world alive between sessions
-├── core/registry/          # Authoritative tier/model registry and credit ledger
+├── runtime/heartbeat/         # Python service — keeps the world alive between sessions
+├── data/registry/          # Authoritative tier/model registry and credit ledger
 ├── world/                  # Living world layer — crew journals, personalities, mailbox, locations
 ├── team/                   # Roster · handoff matrix · correspondence · decision traces
 ├── docs/                   # Architecture · usage guides · settings reference · troubleshooting

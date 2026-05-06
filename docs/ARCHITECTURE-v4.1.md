@@ -73,7 +73,7 @@ tier-auto snap --> T0 (Scout)  [closes vault payloads]
 ```
 .github/agents/         agent spec .md files
 agents/scout/           Scout runtime directory
-core/registry/
+data/registry/
   models.json           tier/model registry
   credits.ledger        credit monitoring
 world/vault/

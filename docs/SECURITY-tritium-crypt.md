@@ -87,7 +87,7 @@ Never silently degrade to a weaker algorithm.
 
 1. Agent files present
 2. Scout availability (python3 on PATH)
-3. core/registry/models.json valid JSON
+3. data/registry/models.json valid JSON
 4. world/vault/manifest.json valid JSON
 5. No open mirror payloads (warn on open)
 6. `cryptography` importable
