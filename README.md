@@ -48,8 +48,8 @@ tritium/
 │   ├── claude-cli/
 │   ├── gemini-cli/
 │   └── openai-lmstudio/
-├── runtime/                # Node/TS server · dashboard SPA · CLI · JSON schemas
-├── heartbeat/              # Python service — keeps the world alive between sessions
+├── core/runtime/                # Node/TS server · dashboard SPA · CLI · JSON schemas
+├── core/heartbeat/              # Python service — keeps the world alive between sessions
 ├── world/                  # Living world layer — crew journals, personalities, mailbox, locations
 ├── team/                   # Roster · handoff matrix · correspondence · decision traces
 ├── docs/                   # Architecture · usage guides · settings reference · troubleshooting
@@ -77,7 +77,7 @@ tritium/
 ### 2. Start the live coordination layer
 
 ```bash
-cd runtime/server
+cd core/runtime/server
 npm install
 npm start
 # Dashboard: http://localhost:7330
@@ -159,7 +159,7 @@ See [docs/settings-reference.md](docs/settings-reference.md) for every key and i
 
 MIT — see [LICENSE](LICENSE).
 
-See [team/TEAM.md](team/TEAM.md) for the full handoff matrix and interaction patterns.
+See [world/social/world/social/team/TEAM.md](world/social/world/social/team/TEAM.md) for the full handoff matrix and interaction patterns.
 
 ## Live coordination layer
 
@@ -200,7 +200,7 @@ Add a new agent in one command:
 bash scripts/new-agent.sh <name> "<role-description>"
 ```
 
-This scaffolds `agents/<name>/`, registers it in `team/TEAM.md`, adds a settings stub, and prepares prompts for each adapter.
+This scaffolds `agents/<name>/`, registers it in `world/social/world/social/team/TEAM.md`, adds a settings stub, and prepares prompts for each adapter.
 
 ## Pre-release
 

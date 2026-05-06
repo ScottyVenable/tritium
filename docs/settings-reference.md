@@ -33,7 +33,7 @@ Tritium reads `SETTINGS.jsonc` from the package root. If absent, falls back to `
 bash scripts/new-agent.sh <name> "<role description>"
 ```
 
-This scaffolds `agents/<name>/`, registers in `team/TEAM.md`, and inserts a default settings stub.
+This scaffolds `agents/<name>/`, registers in `world/social/team/TEAM.md`, and inserts a default settings stub.
 
 ## Independence levels in detail
 

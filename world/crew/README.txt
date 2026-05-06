@@ -31,7 +31,7 @@ allowed tools, and argument hints — live in:
 
   agents/<name>/agent.md
 
-That is the runtime/technical layer. Edit those files in
+That is the core/runtime/technical layer. Edit those files in
 `agents/`, not in `world/crew/`. This folder is the living
 world layer only: journals, durable memories, personality,
 workbook scratch space.

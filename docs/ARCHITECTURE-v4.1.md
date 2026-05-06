@@ -6,7 +6,7 @@ Extends v4.0 Genesis. See ARCHITECTURE-v4.md for base components.
 
 ### Encrypted vault (tritium-crypt)
 
-AES-256-GCM encrypted payload store at `world_vault/`.
+AES-256-GCM encrypted payload store at `world/vault/`.
 X25519/HKDF-SHA-256 key wrapping. Ed25519 manifest signing.
 Full spec: docs/SECURITY-tritium-crypt.md.
 
@@ -73,10 +73,10 @@ tier-auto snap --> T0 (Scout)  [closes vault payloads]
 ```
 .github/agents/         agent spec .md files
 agents/scout/           Scout runtime directory
-registry/
+core/registry/
   models.json           tier/model registry
   credits.ledger        credit monitoring
-world_vault/
+world/vault/
   manifest.json         encrypted payload index
   *.enc                 ciphertext blobs
 .tritium_mirror/        ephemeral plaintext (gitignored)

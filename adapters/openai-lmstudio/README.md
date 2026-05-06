@@ -41,7 +41,7 @@ node src/run.js --agent sol --task "implement a thing"
 For inter-agent IM/email, run the Tritium runtime separately:
 
 ```bash
-cd /path/to/tritium/runtime/server && npm i && npm start
+cd /path/to/tritium/core/runtime/server && npm i && npm start
 ```
 
 The runner dispatches IMs via the runtime's REST API when the agent's response includes a structured `[[IM to=<agent>]]…[[/IM]]` block.

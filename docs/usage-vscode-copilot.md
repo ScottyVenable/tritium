@@ -21,7 +21,7 @@ In VS Code, after installing, you can:
 bash scripts/install.sh --target /path/to/repo --adapter github-copilot-remote
 ```
 
-Installs the GitHub-side `.github/`: CODEOWNERS keyed to agents, PR template with affected-agent checkbox, four issue templates (bug / feature / agent-handoff / research-request), `dependabot.yml`, `labels.md`, and a CI workflow `tritium-verify.yml` that runs the runtime smoke test on PRs touching `runtime/`.
+Installs the GitHub-side `.github/`: CODEOWNERS keyed to agents, PR template with affected-agent checkbox, four issue templates (bug / feature / agent-handoff / research-request), `dependabot.yml`, `labels.md`, and a CI workflow `tritium-verify.yml` that runs the runtime smoke test on PRs touching `core/runtime/`.
 
 ## Both at once
 
@@ -37,7 +37,7 @@ bash scripts/install.sh --target /path/to/repo --adapter github-copilot-remote
 Run the runtime alongside VS Code:
 
 ```bash
-cd /path/to/tritium/runtime/server
+cd /path/to/tritium/core/runtime/server
 npm install
 npm start
 # dashboard at http://localhost:7330

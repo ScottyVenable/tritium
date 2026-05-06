@@ -12,14 +12,14 @@ This installs:
 ## Slash commands (conventions, not plugins)
 
 - `/agent <name>` — switch active agent.
-- `/plan "<request>"` — Bridge writes a plan to `team/interactions/`.
+- `/plan "<request>"` — Bridge writes a plan to `world/social/team/interactions/`.
 - `/inbox` — `tritium inbox check --agent <current>`.
 - `/handoff <to> "<subject>"` — open a handoff packet.
 
 ## Live coordination
 
 ```bash
-cd /path/to/tritium/runtime/server && npm i && npm start
+cd /path/to/tritium/core/runtime/server && npm i && npm start
 ```
 
 Tell Claude things like:

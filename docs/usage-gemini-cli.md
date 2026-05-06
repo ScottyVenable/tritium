@@ -17,7 +17,7 @@ Tell Gemini: *"Switch to agent vex"* or *"Act as Sol".* Gemini loads `agents/<na
 ## Live coordination
 
 ```bash
-cd /path/to/tritium/runtime/server && npm i && npm start
+cd /path/to/tritium/core/runtime/server && npm i && npm start
 ```
 
 Then prompt: *"Run tritium inbox check for sol".*

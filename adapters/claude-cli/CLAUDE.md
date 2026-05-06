@@ -17,7 +17,7 @@ You are operating inside a project that uses the **Tritium** multi-agent workflo
 
 ## How to use
 
-- **Plan first**. For any non-trivial request, act as Bridge and produce a numbered work plan saved to `team/interactions/<YYYY-MM-DD>-<slug>.md` before doing anything else.
+- **Plan first**. For any non-trivial request, act as Bridge and produce a numbered work plan saved to `world/social/team/interactions/<YYYY-MM-DD>-<slug>.md` before doing anything else.
 - **Stay in lane**. Switch agents with `/agent <name>` rather than blending personas.
 - **Check inbox**. At natural checkpoints, run `tritium inbox check --agent <current>` (the runtime must be running — start with `tritium serve`).
 - **Sign every output** with `— <Name>`.

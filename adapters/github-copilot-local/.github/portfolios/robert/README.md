@@ -2,7 +2,7 @@
 
 Working drafts and pre-promotion artifacts. Files here are **not canonical**.
 When a draft is ready, Robert (or Jesse) promotes it to the appropriate
-canonical location (see `team/TEAM.md`).
+canonical location (see `world/social/team/TEAM.md`).
 
 ## Conventions
 
