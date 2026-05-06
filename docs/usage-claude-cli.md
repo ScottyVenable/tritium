@@ -1,7 +1,7 @@
 # Usage: Claude CLI
 
 ```bash
-bash scripts/install.sh --target /path/to/repo --adapter claude-cli
+bash scripts/install-adapter.sh --target /path/to/repo --adapter claude-cli
 ```
 
 This installs:

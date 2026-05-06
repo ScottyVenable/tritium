@@ -68,12 +68,12 @@ tritium/
 
 | Environment | Shell | Command |
 |---|---|---|
-| VS Code GitHub Copilot (local) | bash | `bash scripts/install.sh --target /path/to/repo --adapter github-copilot-local` |
-| VS Code GitHub Copilot (remote) | bash | `bash scripts/install.sh --target /path/to/repo --adapter github-copilot-remote` |
-| Claude CLI | bash | `bash scripts/install.sh --target /path/to/repo --adapter claude-cli` |
-| Gemini CLI | bash | `bash scripts/install.sh --target /path/to/repo --adapter gemini-cli` |
+| VS Code GitHub Copilot (local) | bash | `bash scripts/install-adapter.sh --target /path/to/repo --adapter github-copilot-local` |
+| VS Code GitHub Copilot (remote) | bash | `bash scripts/install-adapter.sh --target /path/to/repo --adapter github-copilot-remote` |
+| Claude CLI | bash | `bash scripts/install-adapter.sh --target /path/to/repo --adapter claude-cli` |
+| Gemini CLI | bash | `bash scripts/install-adapter.sh --target /path/to/repo --adapter gemini-cli` |
 | OpenAI / LM Studio | bash | `cd adapters/openai-lmstudio && npm i && npm run start` |
-| Any of the above | PowerShell | Replace `scripts/install.sh` with `scripts\install.ps1` |
+| Any of the above | PowerShell | Replace `scripts/install-adapter.sh` with `scripts\install-adapter.ps1` |
 
 ### 2. Start the live coordination layer
 

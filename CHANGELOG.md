@@ -6,7 +6,18 @@ Versioning: Semantic Versioning (https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Unified install scripts (Phase B of unification plan).**
+  - `scripts/install.sh` -- canonical bootstrapper for Bash (Linux/macOS/Termux).
+  - `scripts/install.ps1` -- PowerShell mirror for Windows.
+  - Default behaviour is non-invasive: detect platform, check requirements (Node 20+, Python 3.11+, git), set up `~/.tritium-os/{bin,state,keys,ledger}`, init the ledger DB, copy utility scripts to `bin/`, ensure all 9 agent mailboxes exist under `world/social/mailbox/`, and print a summary block.
+  - Opt-in flags: `--install-deps` (apt/dnf/pacman/brew/pkg/winget), `--with-claude`, `--with-gemini`, `--with-copilot`, `--with-lmstudio` (detect-only -- never installs the desktop app), `--profile core|full`, `--dry-run`, `--force`, `--quiet`.
+  - Idempotent: existing files compared and backed up as `.bak` unless `--force`.
+- `scripts/install-adapter.sh` / `scripts/install-adapter.ps1` -- the previous per-repo adapter installer, renamed for clarity. The new `install.sh` / `install.ps1` auto-delegate when `--target`/`--adapter` (or `-Target`/`-Adapter`) is detected, so existing callers keep working.
+
 ### Changed
+- `scripts/setup.sh` is now a thin deprecation wrapper that execs `install.sh`.
+- `README.md` and `docs/usage-*.md` updated to reference `install-adapter.sh` / `install-adapter.ps1` for adapter-into-target-repo workflows.
 - **Repo reorganization (Phase A of unification plan).** Top-level layout flattened to reduce nesting:
   - `core/runtime/` → `runtime/` (Node/TS server, dashboard SPA, CLI, schemas now live at root).
   - `mobile-environment/` → `scripts/mobile/` (Termux/Android helpers grouped under `scripts/`).

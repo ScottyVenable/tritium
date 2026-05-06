@@ -1,7 +1,7 @@
 # Usage: Gemini CLI
 
 ```bash
-bash scripts/install.sh --target /path/to/repo --adapter gemini-cli
+bash scripts/install-adapter.sh --target /path/to/repo --adapter gemini-cli
 ```
 
 Installs:
