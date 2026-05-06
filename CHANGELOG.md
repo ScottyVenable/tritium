@@ -6,7 +6,15 @@ Versioning: Semantic Versioning (https://semver.org/).
 
 ## [Unreleased]
 
-## [4.1.0] -- 2026-01-02 -- Omni-Refactor
+### Removed
+- `world/crew/instructions/` — held `.agent.md` files that duplicated `agents/<name>/agent.md`. Under Option B, `agents/` is the sole runtime/technical layer and `world/crew/` is the living world layer. Diff confirmed no unique content in `world/crew/instructions/`; those copies carried encoding artifacts (`ΓÇö`/`ΓåÆ`) already fixed in `agents/`.
+
+### Changed
+- `world/crew/README.txt` — removed `instructions/` section; updated "ADDING A NEW AGENT" checklist to point to `agents/<name>/`; added explicit note that runtime definitions live in `agents/`, not here.
+- `world/crew/directory/TEMPLATE.md` — updated cross-reference from `world/crew/instructions/<Name>.agent.md` to `agents/<name>/agent.md`.
+- `README.md` — clarified `agents/` and `world/` component descriptions to reflect the two-layer split (runtime/technical vs living world).
+
+## [4.1.0]-- 2026-01-02 -- Omni-Refactor
 
 ### Added
 - `scripts/tritium-crypt` -- AES-256-GCM vault with X25519/HKDF key wrapping and Ed25519 signing.
