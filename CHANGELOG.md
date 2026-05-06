@@ -7,12 +7,12 @@ Versioning: Semantic Versioning (https://semver.org/).
 ## [Unreleased]
 
 ### Removed
-- `world/crew/instructions/` — held `.agent.md` files that duplicated `agents/<name>/agent.md`. Under Option B, `agents/` is the sole runtime/technical layer and `world/crew/` is the living world layer. Diff confirmed no unique content in `world/crew/instructions/`; those copies carried encoding artifacts (`ΓÇö`/`ΓåÆ`) already fixed in `agents/`.
+- `world/crew/instructions/` — held `.agent.md` files that duplicated `agents/<name>/agent.md`. Under Option B, `agents/` is the sole core/runtime/technical layer and `world/crew/` is the living world layer. Diff confirmed no unique content in `world/crew/instructions/`; those copies carried encoding artifacts (`ΓÇö`/`ΓåÆ`) already fixed in `agents/`.
 
 ### Changed
 - `world/crew/README.txt` — removed `instructions/` section; updated "ADDING A NEW AGENT" checklist to point to `agents/<name>/`; added explicit note that runtime definitions live in `agents/`, not here.
 - `world/crew/directory/TEMPLATE.md` — updated cross-reference from `world/crew/instructions/<Name>.agent.md` to `agents/<name>/agent.md`.
-- `README.md` — clarified `agents/` and `world/` component descriptions to reflect the two-layer split (runtime/technical vs living world).
+- `README.md` — clarified `agents/` and `world/` component descriptions to reflect the two-layer split (core/runtime/technical vs living world).
 
 ## [4.1.0]-- 2026-01-02 -- Omni-Refactor
 
@@ -27,9 +27,9 @@ Versioning: Semantic Versioning (https://semver.org/).
 - `scripts/tritium-authorize` -- shield token renewal.
 - `scripts/setup.sh` -- idempotent v4.0+v4.1 bootstrapper (Termux/Linux).
 - `scripts/setup-ledger.py` -- ledger schema helper (called by setup.sh).
-- `registry/models.json` -- authoritative tier/model registry for all agents.
-- `registry/credits.ledger` -- append-only AI credit monitoring.
-- `world_vault/manifest.json` -- encrypted payload manifest.
+- `core/registry/models.json` -- authoritative tier/model registry for all agents.
+- `core/registry/credits.ledger` -- append-only AI credit monitoring.
+- `world/vault/manifest.json` -- encrypted payload manifest.
 - `bridge/tritium_bridge/ledger.py` -- SQLite ledger facade (log_event, remember, recall, summary).
 - `data/ledger.schema.sql` -- SQLite ledger schema.
 - `mobile-environment/configs/bashrc.sh` -- Termux shell integration with aliases and shield check.
@@ -65,7 +65,7 @@ Versioning: Semantic Versioning (https://semver.org/).
 ## [Unreleased]
 
 ### Changed
-- Renamed `bridge/` Python service folder to `heartbeat/` to remove naming collision with the Bridge agent.
+- Renamed `bridge/` Python service folder to `core/heartbeat/` to remove naming collision with the Bridge agent.
 - Renamed `world/` subfolders: dropped Windows Explorer bracket convention throughout.
   - `[1] -- social hub --` → `social/`
   - `[2] -- locations --` → `locations/`
@@ -75,7 +75,7 @@ Versioning: Semantic Versioning (https://semver.org/).
   - `crew/[3b] (agents) instruction files` → `crew/instructions/`
 - Updated `.gitignore` path for bridge-workspace `.env`.
 - Updated internal references in `world/README.md`, `world/crew/README.txt`, `world/crew/directory/TEMPLATE.md`, `world/social/README.txt`, and root `README.md`.
-- Root `README.md` tree now documents `heartbeat/` and `world/`.
+- Root `README.md` tree now documents `core/heartbeat/` and `world/`.
 
 ### Removed
 - `world/[ more folders can be created ]` — empty PowerToys NewPlus placeholder.
@@ -87,24 +87,24 @@ Versioning: Semantic Versioning (https://semver.org/).
 - Initial pre-release of the Tritium multi-agent workflow package.
 - Eight-agent canonical roster: Bridge, Sol, Vex, Rook, Robert, Lux, Nova, Jesse.
 - Bridge upgraded from pure router to **planner + router + watchdog**:
-  - Planning section in `agents/bridge/agent.md` (decompose → write plan to `team/interactions/<date>-<slug>.md` → assign owners → dispatch).
+  - Planning section in `agents/bridge/agent.md` (decompose → write plan to `world/social/team/interactions/<date>-<slug>.md` → assign owners → dispatch).
   - Watchdog duty: scans recent correspondence/interactions and proposes prompt patches to `agents/bridge/proposed-prompt-edits/`.
-- Real-time inter-agent **chat layer** (`runtime/server/`):
+- Real-time inter-agent **chat layer** (`core/runtime/server/`):
   - SQLite (better-sqlite3) message bus with tables `agents`, `im_messages`, `email`, `threads`, `read_receipts`, `settings`.
   - REST + WebSocket API.
   - Two channels: IM (short, threaded) and Email (long, structured, attachments).
-- **Local dashboard** (`runtime/dashboard/`):
+- **Local dashboard** (`core/runtime/dashboard/`):
   - Static SPA, dark minimalist theme, responsive ≥360px.
   - Routes: `/im`, `/email`, `/agents`, `/settings`, `/timeline`.
   - WebSocket-driven live IM stream; compose IM and email as `@you`.
   - No external CDN — all assets local.
-- **`tritium` CLI** (`runtime/cli/`):
+- **`tritium` CLI** (`core/runtime/cli/`):
   - `tritium serve` — start server + dashboard.
   - `tritium inbox check [--agent <name>]` — list unread IMs and emails.
   - `tritium send-im --from <a> --to <b> --body "..."`
   - `tritium send-email --from <a> --to <b> --subject "..." --body "..." [--attach <path>]`
   - `tritium run-agent <name> --task "..."` (stub for adapter dispatch).
-- **JSON Schemas** (`runtime/schemas/`) for IM, email, settings, handoffs.
+- **JSON Schemas** (`core/runtime/schemas/`) for IM, email, settings, handoffs.
 - **Master settings file** (`SETTINGS.example.jsonc`) with per-agent stats: `independence`, `verbosity`, `inbox_check_interval`, `memory_write_quota`, `portfolio_size_limit`, `model_preference`, `temperature`, `enabled`. Globals: `default_model`, `dashboard_port`, `db_path`, `auto_archive_after_days`, `premium_budget_hint`.
 - **Adapters**:
   - `adapters/github-copilot-local/` — drop-in `.github/` for VS Code Copilot.

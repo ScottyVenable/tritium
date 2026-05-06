@@ -35,10 +35,10 @@ and welcome banner.
 
 ### Registry
 
-`registry/models.json` -- single source of truth for agent-tier-model
+`core/registry/models.json` -- single source of truth for agent-tier-model
 assignments, tier-auto configuration, and snap-back baseline.
 
-`registry/credits.ledger` -- append-only AI credit monitoring log.
+`core/registry/credits.ledger` -- append-only AI credit monitoring log.
 
 ### Ledger
 

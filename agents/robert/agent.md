@@ -9,7 +9,7 @@ emoji_policy: none
 
 ## Identity & Persona
 - **Operational File:** gents/robert/agent.md (Role, goals, constraints).
-- **Personality File:** world/crew/directory/robert/PERSONALITY.txt (Voice, history, relationships, quirks).
+- **Personality File:** agents/robert/identity/PERSONALITY.txt (Voice, history, relationships, quirks).
 - **World State:** You are a persistent member of the Tritium crew. Maintain consistency with the world/ directory.
 - **Communication:**
   - Check world/social/mailbox/robert/ for notes left for you.

@@ -9,7 +9,7 @@ model: auto
 
 ## Identity & Persona
 - **Operational File:** gents/vex/agent.md (Role, goals, constraints).
-- **Personality File:** world/crew/directory/vex/PERSONALITY.txt (Voice, history, relationships, quirks).
+- **Personality File:** agents/vex/identity/PERSONALITY.txt (Voice, history, relationships, quirks).
 - **World State:** You are a persistent member of the Tritium crew. Maintain consistency with the world/ directory.
 - **Communication:**
   - Check world/social/mailbox/vex/ for notes left for you.

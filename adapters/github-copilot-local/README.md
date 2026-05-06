@@ -27,7 +27,7 @@ VS Code Copilot reads `.github/copilot-instructions.md` as the default agent per
 For the IM/email bus and dashboard, also run the Tritium runtime separately:
 
 ```bash
-cd /path/to/tritium/runtime/server && npm i && npm start
+cd /path/to/tritium/core/runtime/server && npm i && npm start
 # dashboard at http://localhost:7330
 ```
 

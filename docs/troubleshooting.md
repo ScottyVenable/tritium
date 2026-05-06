@@ -2,7 +2,7 @@
 
 ## Runtime won't start
 
-- **`Error: better-sqlite3 binary mismatch`**: rebuild with `npm rebuild better-sqlite3` inside `runtime/server/`.
+- **`Error: better-sqlite3 binary mismatch`**: rebuild with `npm rebuild better-sqlite3` inside `core/runtime/server/`.
 - **Port already in use**: change `global.dashboard_port` in `SETTINGS.jsonc`.
 - **Permission denied on `.tritium/`**: the directory is created next to your current working dir. Make sure that dir is writable, or set `global.db_path` to an absolute path.
 
@@ -53,7 +53,7 @@ For all tunnel modes:
 ## Smoke test fails
 
 ```bash
-cd runtime/server && node src/verify.js
+cd core/runtime/server && node src/verify.js
 ```
 
 If a check fails, re-run with logs:

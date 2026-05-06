@@ -111,10 +111,10 @@ Jesse (issue) → Robert (investigation) → requesting agent (consume findings)
 | `agents/<name>/memory/session/` | Per-conversation working notes |
 | `agents/<name>/memory/personal/` | Cross-workspace agent preferences |
 | `agents/<name>/portfolio/` | Pre-promotion drafts |
-| `team/correspondence/` | Durable inter-agent correspondence |
-| `team/handoffs/` | Formal transfer packets |
-| `team/interactions/` | Decision traces and Bridge work plans |
-| `team/thoughts/` | Non-binding rationale and open questions |
+| `world/social/team/correspondence/` | Durable inter-agent correspondence |
+| `world/social/team/handoffs/` | Formal transfer packets |
+| `world/social/team/interactions/` | Decision traces and Bridge work plans |
+| `world/social/team/thoughts/` | Non-binding rationale and open questions |
 
 File naming: `[topic]-[descriptor].[ext]` for assets; `[YYYY-MM-DD]-[slug].md` for dated reports and Bridge plans.
 

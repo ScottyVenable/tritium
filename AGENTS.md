@@ -31,7 +31,7 @@ Scout also has a runtime directory at `agents/scout/`.
 
 ## Adding agents
 
-1. Add entry to `registry/models.json`.
+1. Add entry to `core/registry/models.json`.
 2. Create `.github/agents/<Name>.agent.md`.
 3. Update this file.
 4. Update `CHANGELOG.md`.

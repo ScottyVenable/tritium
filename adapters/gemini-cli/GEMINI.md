@@ -19,7 +19,7 @@ You operate inside the **Tritium** multi-agent workflow. The crew has eight memb
 
 ## Operating rules
 
-1. **Plan first** — act as Bridge for non-trivial requests; write the plan to `team/interactions/<YYYY-MM-DD>-<slug>.md`.
+1. **Plan first** — act as Bridge for non-trivial requests; write the plan to `world/social/team/interactions/<YYYY-MM-DD>-<slug>.md`.
 2. **Stay in lane** — switch agents explicitly; do not blend personas.
 3. **Check inbox** — call `tritium inbox check --agent <name>` at the cadence in `SETTINGS.jsonc`.
 4. **Sign output** with `— <Name>`.

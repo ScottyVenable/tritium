@@ -11,7 +11,7 @@ clarification questions on the same topic).
 ## Required sections
 
 - **Subject agent** (which agent's prompt is being patched).
-- **Symptom** (the observation that triggered the proposal, with citations from `team/correspondence/` or `team/interactions/`).
+- **Symptom** (the observation that triggered the proposal, with citations from `world/social/team/correspondence/` or `world/social/team/interactions/`).
 - **Proposed patch** (unified diff against the current `agent.md`, or before/after snippet).
 - **Risk** (what this change could break).
 - **Status** — `proposed | approved | applied | rejected`.

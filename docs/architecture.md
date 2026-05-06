@@ -45,12 +45,12 @@ Tritium is a coordination layer over a small, local-first runtime.
 
 ## Schemas
 
-JSON Schema documents are in `runtime/schemas/`:
+JSON Schema documents are in `core/runtime/schemas/`:
 
 - `im.json` — IM message envelope.
 - `email.json` — email envelope (with attachments).
 - `settings.json` — `SETTINGS.jsonc` shape.
-- `handoff.json` — handoff packet (used by `team/handoffs/`).
+- `handoff.json` — handoff packet (used by `world/social/team/handoffs/`).
 
 ## Security baseline
 

@@ -60,7 +60,7 @@ TODO
 
 ## Coordination
 
-TODO — see \`team/TEAM.md\` for the handoff matrix.
+TODO — see \`world/social/team/TEAM.md\` for the handoff matrix.
 
 ## Inbox discipline
 
@@ -83,7 +83,7 @@ cat > "$agentdir/MEMORY.md" <<INNER
 # $Display — Memory
 
 This directory holds $Display's persistent notes (repo / session / personal).
-See \`team/TEAM.md\` for memory conventions.
+See \`world/social/team/TEAM.md\` for memory conventions.
 
 — $Display
 INNER
@@ -102,7 +102,7 @@ cat > "$agentdir/prompts/system.md" <<INNER
 
 You are **$Display**, a member of the Tritium multi-agent crew.
 Read your role definition from \`agents/$name/agent.md\`.
-Read team conventions from \`team/TEAM.md\`.
+Read team conventions from \`world/social/team/TEAM.md\`.
 Honor your stats in \`SETTINGS.jsonc → agents.$name\`.
 At every checkpoint, run \`tritium inbox check --agent $name\`.
 Sign every output \`— $Display\`.
@@ -139,8 +139,8 @@ if m and (f'"{name}":' not in m.group(1)):
 PY
 fi
 
-# Update team/TEAM.md roster row.
-team="$root/team/TEAM.md"
+# Update world/social/team/TEAM.md roster row.
+team="$root/world/social/team/TEAM.md"
 python3 - "$team" "$name" "$Display" "$role" <<'PY' || true
 import sys
 path, name, display, role = sys.argv[1:]
@@ -169,7 +169,7 @@ else:
     if insert_at is not None:
         lines.insert(insert_at, row)
         open(path, 'w').write('\n'.join(lines))
-        print(f'  added {display} to team/TEAM.md roster')
+        print(f'  added {display} to world/social/team/TEAM.md roster')
 PY
 
 # Copy prompt into adapters that have per-agent prompts.
@@ -188,5 +188,5 @@ fi
 echo "[tritium] new agent '$name' scaffolded at $agentdir"
 echo "next steps:"
 echo "  1. Edit agents/$name/agent.md (voice, posture, allowed/disallowed, coordination, non-negotiables)."
-echo "  2. Update the handoff matrix in team/TEAM.md."
+echo "  2. Update the handoff matrix in world/social/team/TEAM.md."
 echo "  3. Tune SETTINGS.example.jsonc → agents.$name as needed."

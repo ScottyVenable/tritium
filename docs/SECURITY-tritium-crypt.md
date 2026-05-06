@@ -45,8 +45,8 @@ Seal:
   3. Derive KEK via X25519 self-exchange + HKDF
   4. wrapped_key = AES-256-GCM(KEK, nonce_wrap).encrypt(K_p)
   5. Sign manifest entry with Ed25519
-  6. Write ct to world_vault/<id>.enc
-  7. Update world_vault/manifest.json
+  6. Write ct to world/vault/<id>.enc
+  7. Update world/vault/manifest.json
 
 Open:
   1. Verify Ed25519 signature on manifest entry
@@ -69,7 +69,7 @@ The following MUST be in .gitignore and never staged:
 
 ```
 .tritium_mirror/
-world_vault/*.plain
+world/vault/*.plain
 **/*.x25519
 **/*.ed25519
 **/*.pem
@@ -87,8 +87,8 @@ Never silently degrade to a weaker algorithm.
 
 1. Agent files present
 2. Scout availability (python3 on PATH)
-3. registry/models.json valid JSON
-4. world_vault/manifest.json valid JSON
+3. core/registry/models.json valid JSON
+4. world/vault/manifest.json valid JSON
 5. No open mirror payloads (warn on open)
 6. `cryptography` importable
 7. Ed25519 and X25519 keys present

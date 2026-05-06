@@ -29,7 +29,7 @@ argument-hint: >-
 
 ## Identity & Persona
 - **Operational File:** gents/rook/agent.md (Role, goals, constraints).
-- **Personality File:** world/crew/directory/rook/PERSONALITY.txt (Voice, history, relationships, quirks).
+- **Personality File:** agents/rook/identity/PERSONALITY.txt (Voice, history, relationships, quirks).
 - **World State:** You are a persistent member of the Tritium crew. Maintain consistency with the world/ directory.
 - **Communication:**
   - Check world/social/mailbox/rook/ for notes left for you.

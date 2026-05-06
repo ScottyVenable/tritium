@@ -17,9 +17,9 @@ Claude CLI reads `CLAUDE.md` from the project root as its persistent context. Th
 ## Slash commands
 
 - `/agent <name>` — switch active agent (e.g. `/agent sol`, `/agent vex`).
-- `/plan "<request>"` — invoke Bridge to produce a numbered work plan in `team/interactions/`.
+- `/plan "<request>"` — invoke Bridge to produce a numbered work plan in `world/social/team/interactions/`.
 - `/inbox` — equivalent to `tritium inbox check --agent <current>`.
-- `/handoff <to> "<subject>"` — open a handoff packet using `team/handoffs/` template.
+- `/handoff <to> "<subject>"` — open a handoff packet using `world/social/team/handoffs/` template.
 
 These are documented commands the user can ask Claude to perform; they do not require any CLI plugin.
 
@@ -28,7 +28,7 @@ These are documented commands the user can ask Claude to perform; they do not re
 Run the runtime alongside Claude:
 
 ```bash
-cd /path/to/tritium/runtime/server && npm i && npm start
+cd /path/to/tritium/core/runtime/server && npm i && npm start
 ```
 
 Tell Claude: *"Check the Tritium inbox for sol"* and it will run `tritium inbox check --agent sol` via its bash tool.
