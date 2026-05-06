@@ -47,6 +47,11 @@ const warn = (s) => `${C.yellow}${C.bold}!${C.reset} ${s}`;
 const dim  = (s) => `${C.dim}${s}${C.reset}`;
 const bold = (s) => `${C.bold}${s}${C.reset}`;
 
+// ─── Named constants ──────────────────────────────────────────────────────────
+
+const MIN_NODE_MAJOR    = 20;
+const RESTART_DELAY_MS  = 500;  // brief pause so the old server process can exit
+
 // ─── Version ─────────────────────────────────────────────────────────────────
 
 function getVersion() {
@@ -181,9 +186,10 @@ async function checkForUpdate(silent = false) {
 
     if (localSha && r.json.sha !== localSha) {
       if (!silent) {
+        const commitDate = r.json.commit?.author?.date?.slice(0, 10) ?? '';
         console.log(warn(`Update available!  Run ${bold('tritium-os update')} to upgrade.`));
         console.log(dim(`  local  : ${localSha.slice(0, 10)}`));
-        console.log(dim(`  remote : ${r.json.sha.slice(0, 10)}  (${r.json.commit?.author?.date?.slice(0,10) ?? ''})`));
+        console.log(dim(`  remote : ${r.json.sha.slice(0, 10)}  (${commitDate})`));
         console.log();
       }
     }
@@ -245,7 +251,7 @@ async function doctor() {
   check('Node.js', () => {
     const v = run('node --version');
     const major = Number(v.replace(/^v/, '').split('.')[0]);
-    if (major < 20) throw new Error(`${v} (need ≥ 20)`);
+    if (major < MIN_NODE_MAJOR) throw new Error(`${v} (need ≥ ${MIN_NODE_MAJOR})`);
     return v;
   });
   check('npm', () => run('npm --version'));
@@ -495,7 +501,7 @@ if (updateCheckCommands.has(cmd)) {
     case 'restart': {
       await stopServer();
       // Small pause then re-serve in a detached child so this process exits cleanly.
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, RESTART_DELAY_MS));
       const child = spawn(process.execPath, [process.argv[1], 'serve'], {
         stdio: 'inherit', detached: false,
       });

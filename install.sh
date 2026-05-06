@@ -85,7 +85,7 @@ else
       # Detect Ubuntu/Debian proot under Termux
       if [ -f /etc/os-release ] && grep -qi ubuntu /etc/os-release 2>/dev/null; then
         # Check if we're inside a proot (heuristic: /proc/1/cmdline contains proot or we lack /dev/pts)
-        if [ -f /proc/1/cmdline ] && cat /proc/1/cmdline 2>/dev/null | tr '\0' ' ' | grep -qi proot; then
+        if [ -f /proc/1/cmdline ] && tr '\0' ' ' < /proc/1/cmdline 2>/dev/null | grep -qi proot; then
           IS_PROOT_UBUNTU=1
           _log "  Detected: Ubuntu proot (under Termux)"
         fi
@@ -311,10 +311,8 @@ if [ "$DRY" -eq 1 ]; then
   _log "  [dry] would write $WRAPPER_PATH"
 else
   if [ -f "$WRAPPER_PATH" ] && [ "$FORCE" -eq 0 ]; then
-    # Only overwrite if content differs
-    existing_ref="$(grep 'exec node' "$WRAPPER_PATH" 2>/dev/null | grep -o '"[^"]*"' | head -1 || true)"
-    new_ref="\"$CLI_SCRIPT\""
-    if [ "$existing_ref" = "$new_ref" ]; then
+    # Check if the wrapper already points to the correct CLI script path.
+    if grep -qF "$CLI_SCRIPT" "$WRAPPER_PATH" 2>/dev/null; then
       _ok "tritium-os already installed at $WRAPPER_PATH (unchanged)"
     else
       cp "$WRAPPER_PATH" "$WRAPPER_PATH.bak" 2>/dev/null || true
