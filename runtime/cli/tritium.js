@@ -110,12 +110,46 @@ const args = parseArgs(process.argv.slice(3));
     case 'inbox': {
       const sub = args._[0];
       if (sub !== 'check') { help(); process.exit(1); }
-      await ensureRunning();
       const agent = args.agent;
       if (!agent && !args.all) {
         console.error('error: --agent <name> required (or pass --all)');
         process.exit(1);
       }
+
+      // Probe the runtime; if unreachable, fall back to the file mailbox.
+      let apiUp = false;
+      try {
+        const h = await apiFetch('GET', '/api/health');
+        apiUp = (h.status === 200);
+      } catch { apiUp = false; }
+
+      if (!apiUp) {
+        // File-mailbox fallback. Recipient-managed: do not mark anything as read.
+        const targets = agent ? [agent] : (() => {
+          const mbRoot = path.join(ROOT, 'world', 'social', 'mailbox');
+          if (!fs.existsSync(mbRoot)) return [];
+          return fs.readdirSync(mbRoot, { withFileTypes: true })
+            .filter(d => d.isDirectory() && !d.name.startsWith('['))
+            .map(d => d.name);
+        })();
+        console.log('# IM (API unavailable — showing file mailbox)');
+        for (const a of targets) {
+          const dir = path.join(ROOT, 'world', 'social', 'mailbox', a);
+          if (!fs.existsSync(dir)) continue;
+          const entries = fs.readdirSync(dir, { withFileTypes: true })
+            .filter(d => d.isFile() && d.name !== '.gitkeep')
+            .map(d => {
+              const full = path.join(dir, d.name);
+              return { name: d.name, mtime: fs.statSync(full).mtimeMs };
+            })
+            .sort((a, b) => b.mtime - a.mtime);
+          for (const e of entries) {
+            console.log(`  world/social/mailbox/${a}/${e.name}`);
+          }
+        }
+        break;
+      }
+
       const q = agent ? `?agent=${encodeURIComponent(agent)}&unreadOnly=1` : '';
       const r = await apiFetch('GET', `/api/im${q}`);
       console.log(`# IM (${r.json.length})`);

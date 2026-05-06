@@ -55,5 +55,21 @@ At every checkpoint, run: tritium inbox check --agent $Name
 — $Display
 "@ | Out-File -Encoding utf8 "$agentdir\prompts\system.md"
 
+# Copy prompt into adapters that have per-agent prompts.
+foreach ($adapter in @('claude-cli','gemini-cli')) {
+  $d = Join-Path $root "adapters\$adapter\agents"
+  if (Test-Path $d) {
+    Copy-Item "$agentdir\agent.md" (Join-Path $d "$Name.md") -Force
+    Write-Host "  registered in adapters/$adapter/"
+  }
+}
+
+# Copilot-local uses Display-cased file names.
+$copilotLocal = Join-Path $root "adapters\github-copilot-local\.github\agents"
+if (Test-Path $copilotLocal) {
+  Copy-Item "$agentdir\agent.md" (Join-Path $copilotLocal "$Display.agent.md") -Force
+  Write-Host "  registered in adapters/github-copilot-local/"
+}
+
 Write-Host "[tritium] new agent '$Name' scaffolded at $agentdir"
 Write-Host "Manual follow-ups: edit agent.md, update team\TEAM.md handoff matrix, tune SETTINGS.example.jsonc."
