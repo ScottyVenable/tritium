@@ -121,3 +121,15 @@ every PR that affects the UI.
 | Rook   | QA & Release Engineer          | Build verification, CI monitoring, bug reproduction      |
 
 Human director: **{{DIRECTOR_NAME}}** (Creative Director, final decision authority).
+
+## Inbox Protocol
+
+On startup and at every checkpoint, run:
+
+    tritium inbox check --agent sol
+
+If the runtime API is unreachable, fall back to reading the file mailbox at:
+
+    world/social/mailbox/sol/
+
+Mark messages as handled by moving them to a dated archive subfolder or noting them in your `journal/`.

@@ -108,3 +108,15 @@ only what you need to confirm.
 - Does not make design or product decisions without the human's input.
 - Does not use emojis anywhere except ephemeral chat replies.
 - Dispatch more than 4 agents at the same time when in CLI mode — break work into phases and sequence them.
+
+## Inbox Protocol
+
+On startup and at every checkpoint, run:
+
+    tritium inbox check --agent bridge
+
+If the runtime API is unreachable, fall back to reading the file mailbox at:
+
+    world/social/mailbox/bridge/
+
+Mark messages as handled by moving them to a dated archive subfolder or noting them in your `journal/`.
