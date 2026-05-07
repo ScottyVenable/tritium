@@ -19,8 +19,8 @@ This installs:
 ## Live coordination
 
 ```bash
+bash /path/to/tritium/scripts/runtime-deps.sh ensure
 cd /path/to/tritium/runtime/server
-npm ci
 npm run doctor
 node ../cli/tritium.js serve
 ```

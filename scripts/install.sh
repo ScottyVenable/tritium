@@ -158,7 +158,7 @@ case "$REPO_ROOT" in
 esac
 
 V41_SCRIPTS="tritium-crypt tritium-open tritium-close tritium-cp tritium-doctor tier-auto tritium-id tritium-authorize"
-HELPER_SCRIPTS="tritium setup-ledger.py new-agent.sh new-agent.ps1 package.sh package.ps1 install-adapter.sh install-adapter.ps1"
+HELPER_SCRIPTS="tritium setup-ledger.py new-agent.sh new-agent.ps1 package.sh package.ps1 install-adapter.sh install-adapter.ps1 runtime-deps.sh"
 
 _log ""
 _log "+--- Tritium OS v${VERSION} install ---"
@@ -168,7 +168,7 @@ _log "  Tritium home: $TRITIUM_HOME"
 _log "  Profile    : $PROFILE"
 [ "$DRY" -eq 1 ] && _log "  Mode       : DRY-RUN (no changes will be made)"
 if [ "$REPO_ON_SHARED_STORAGE" -eq 1 ]; then
-    _warn "runtime/server npm ci may fail here because npm needs node_modules/.bin symlinks. If you hit EACCES: symlink, move the repo under \$HOME and retry."
+    _warn "runtime/server npm ci may fail here because npm needs node_modules/.bin symlinks. Use bash scripts/runtime-deps.sh ensure to stage the runtime under \$HOME/.tritium-os before running doctor or serve."
 fi
 
 # --- requirements check -----------------------------------------------------

@@ -2,21 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
 import { createRequire } from 'node:module';
+import { getRepoRoot, getRuntimeLocation } from './runtime-paths.js';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-const SERVER_ROOT = path.resolve(__dirname, '..');
-const REPO_ROOT = path.resolve(SERVER_ROOT, '..', '..');
-const requireFromServer = createRequire(path.join(SERVER_ROOT, 'package.json'));
 const REQUIRED_PACKAGES = ['ws', 'better-sqlite3'];
 
-function isSharedStorage(repoRoot) {
-  const normalized = repoRoot.replace(/\\/g, '/');
-  return normalized.startsWith('/storage/')
-    || normalized.startsWith('/sdcard/')
-    || normalized.startsWith('/mnt/sdcard/');
-}
-
-function findMissingPackages() {
+function findMissingPackages(serverRoot) {
+  const requireFromServer = createRequire(path.join(serverRoot, 'package.json'));
   const missing = [];
   for (const name of REQUIRED_PACKAGES) {
     try {
@@ -28,46 +20,68 @@ function findMissingPackages() {
   return missing;
 }
 
-export function checkRuntimeInstall(repoRoot = REPO_ROOT) {
-  const nodeModulesDir = path.join(SERVER_ROOT, 'node_modules');
-  const missingPackages = findMissingPackages();
-  const sharedStorage = isSharedStorage(repoRoot);
+export function checkRuntimeInstall(repoRoot = getRepoRoot()) {
+  const location = getRuntimeLocation(repoRoot);
+  const nodeModulesDir = path.join(location.serverRoot, 'node_modules');
+  const missingPackages = fs.existsSync(path.join(location.serverRoot, 'package.json'))
+    ? findMissingPackages(location.serverRoot)
+    : REQUIRED_PACKAGES.slice();
+  const usingRepoInstall = path.resolve(location.serverRoot) === path.resolve(location.repoServerRoot);
 
   return {
-    ok: missingPackages.length === 0,
-    repoRoot,
-    serverRoot: SERVER_ROOT,
+    ok: missingPackages.length === 0 && (!location.needsWorkaround || !usingRepoInstall || location.runningFromStage),
+    ...location,
     nodeModulesPresent: fs.existsSync(nodeModulesDir),
     missingPackages,
-    sharedStorage,
   };
 }
 
 export function formatRuntimeInstallHelp(result) {
   const lines = [
-    `error: Tritium runtime dependencies are not installed or not loadable from ${result.serverRoot}.`,
+    result.needsWorkaround
+      ? 'error: Tritium runtime staging is required here, but the staged runtime is missing, stale, or incomplete.'
+      : `error: Tritium runtime dependencies are not installed or not loadable from ${result.serverRoot}.`,
   ];
 
-  if (!result.nodeModulesPresent) {
+  if (result.needsWorkaround && !result.stageFresh) {
+    lines.push(`expected staged runtime: ${result.stageRoot}`);
+  }
+
+  if (!result.nodeModulesPresent && !result.needsWorkaround) {
     lines.push('node_modules/ is missing.');
   } else if (result.missingPackages.length > 0) {
     lines.push(`missing packages: ${result.missingPackages.join(', ')}`);
   }
 
-  lines.push(
-    'run:',
-    '  cd runtime/server',
-    '  npm ci'
-  );
-
-  if (result.sharedStorage) {
+  if (result.needsWorkaround) {
     lines.push(
+      'run:',
+      '  bash scripts/runtime-deps.sh ensure',
+      '  cd runtime/server',
+      '  npm run doctor',
       '',
-      'This checkout appears to be on shared storage.',
-      'npm needs to create node_modules/.bin symlinks there, and that often fails with:',
-      '  EACCES: permission denied, symlink ... node_modules/.bin/...',
-      'Move the repo to a Linux-native writable path such as ~/Coding/tritium_os,',
-      'then rerun npm ci.'
+      'Tritium will stage runtime/server under ~/.tritium-os/ on Linux-native storage,',
+      'run npm ci there, and use that staged path for doctor / serve.'
+    );
+    if (result.sharedStorage) {
+      lines.push(
+        '',
+        'This checkout appears to be on Android/shared storage.',
+        'npm needs to create node_modules/.bin symlinks there, and that often fails with:',
+        '  EACCES: permission denied, symlink ... node_modules/.bin/...'
+      );
+    } else if (!result.symlinksSupported) {
+      lines.push(
+        '',
+        'This filesystem failed a symlink probe inside runtime/server.',
+        'The staged workaround avoids running npm ci on that path.'
+      );
+    }
+  } else {
+    lines.push(
+      'run:',
+      '  cd runtime/server',
+      '  npm ci'
     );
   }
 
@@ -83,7 +97,8 @@ export function formatRuntimeInstallHelp(result) {
 if (import.meta.url === url.pathToFileURL(process.argv[1] ?? '').href) {
   const result = checkRuntimeInstall();
   if (result.ok) {
-    console.log(`[tritium] runtime preflight OK (${REQUIRED_PACKAGES.join(', ')})`);
+    const mode = result.stageActive ? `staged runtime ${result.serverRoot}` : result.serverRoot;
+    console.log(`[tritium] runtime preflight OK (${REQUIRED_PACKAGES.join(', ')}) via ${mode}`);
     process.exit(0);
   }
 

@@ -92,8 +92,7 @@ Useful flags: `--profile core|full`, `--with-lmstudio` (detect only), `--dry-run
 ### 2. Start the runtime
 
 ```bash
-cd runtime/server
-npm ci
+bash scripts/runtime-deps.sh ensure
 npm run doctor
 ```
 
@@ -107,7 +106,7 @@ node runtime/cli/tritium.js serve
 
 Dashboard: `http://localhost:7330`
 
-If `npm ci` fails with `EACCES: symlink` on Android or shared storage paths such as `/storage/...`, move the checkout to a Linux-native writable path under `$HOME` and rerun it there.
+`scripts/runtime-deps.sh` keeps the normal `runtime/server` install on standard filesystems. On Android or other shared-storage paths such as `/storage/...`, it stages `runtime/server` under `$HOME/.tritium-os/runtime-server/`, runs `npm ci` there, and `tritium serve` / `npm run doctor` will use that staged runtime automatically.
 
 ### 3. Verify a live checkout
 

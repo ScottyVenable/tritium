@@ -12,7 +12,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import url from 'node:url';
 import http from 'node:http';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { checkRuntimeInstall, formatRuntimeInstallHelp } from '../server/src/preflight.js';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
@@ -113,14 +113,34 @@ const args = parseArgs(process.argv.slice(3));
   switch (cmd) {
     case 'serve':
     case 'start': {
-      const installCheck = checkRuntimeInstall(ROOT);
+      let installCheck = checkRuntimeInstall(ROOT);
+      if (installCheck.needsWorkaround) {
+        const helper = path.join(ROOT, 'scripts', 'runtime-deps.sh');
+        if (!fs.existsSync(helper)) {
+          console.error('error: scripts/runtime-deps.sh is missing');
+          process.exit(2);
+        }
+        const ensure = spawnSync('bash', [helper, '--quiet', 'ensure'], {
+          cwd: ROOT,
+          stdio: 'inherit',
+        });
+        if ((ensure.status ?? 1) !== 0) {
+          process.exit(ensure.status ?? 1);
+        }
+        installCheck = checkRuntimeInstall(ROOT);
+      }
       if (!installCheck.ok) {
         console.error(formatRuntimeInstallHelp(installCheck));
         process.exit(2);
       }
-      const child = spawn(process.execPath, [path.join(ROOT, 'runtime', 'server', 'src', 'index.js')], {
+      const child = spawn(process.execPath, [path.join(installCheck.serverRoot, 'src', 'index.js')], {
         stdio: 'inherit',
-        cwd: path.join(ROOT, 'runtime', 'server'),
+        cwd: installCheck.serverRoot,
+        env: {
+          ...process.env,
+          TRITIUM_REPO_ROOT: ROOT,
+          TRITIUM_RUNTIME_SERVER_ROOT: installCheck.serverRoot,
+        },
       });
       child.on('exit', (code) => process.exit(code ?? 0));
       break;

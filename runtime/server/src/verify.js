@@ -6,9 +6,11 @@ import path from 'node:path';
 import fs from 'node:fs';
 import url from 'node:url';
 import { spawn } from 'node:child_process';
+import { checkRuntimeInstall, formatRuntimeInstallHelp } from './preflight.js';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..', '..');
+const installCheck = checkRuntimeInstall(ROOT);
 const PORT = 7331; // distinct from default to avoid clashing with a running instance
 
 const TMP = path.resolve(ROOT, '.tritium-verify');
@@ -33,10 +35,19 @@ const hadExisting = fs.existsSync(targetSettings);
 const backup = hadExisting ? fs.readFileSync(targetSettings, 'utf8') : null;
 fs.copyFileSync(settingsPath, targetSettings);
 
-const child = spawn(process.execPath, [path.join(__dirname, 'index.js')], {
-  cwd: path.join(ROOT, 'runtime', 'server'),
+if (!installCheck.ok) {
+  console.error(formatRuntimeInstallHelp(installCheck));
+  process.exit(2);
+}
+
+const child = spawn(process.execPath, [path.join(installCheck.serverRoot, 'src', 'index.js')], {
+  cwd: installCheck.serverRoot,
   stdio: ['ignore', 'pipe', 'pipe'],
-  env: process.env,
+  env: {
+    ...process.env,
+    TRITIUM_REPO_ROOT: ROOT,
+    TRITIUM_RUNTIME_SERVER_ROOT: installCheck.serverRoot,
+  },
 });
 
 let serverOutput = '';
