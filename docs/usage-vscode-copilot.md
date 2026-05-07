@@ -38,8 +38,9 @@ Run the runtime alongside VS Code:
 
 ```bash
 cd /path/to/tritium/runtime/server
-npm install
-npm start
+npm ci
+npm run doctor
+node ../cli/tritium.js serve
 # dashboard at http://localhost:7330
 ```
 

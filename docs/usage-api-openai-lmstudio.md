@@ -42,10 +42,15 @@ Need a one-paragraph fragment for the loading screen, register: dry-witty.
 ## Live coordination
 
 ```bash
-cd /path/to/tritium/runtime/server && npm i && npm start
+cd /path/to/tritium/runtime/server
+npm ci
+npm run doctor
+node ../cli/tritium.js serve
 ```
 
 The runner will fail-soft if the runtime isn't running — IMs simply won't be delivered, and the agent's text output is preserved verbatim.
+
+If `npm ci` fails with an `EACCES: symlink` error, move the Tritium checkout off shared storage and into a Linux-native writable path before retrying.
 
 ## Security
 

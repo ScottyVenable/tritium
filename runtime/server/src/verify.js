@@ -95,8 +95,8 @@ async function waitReady() {
     check('server boots and /api/health is ok', true);
 
     const agents = await req('GET', '/api/agents');
-    check('GET /api/agents returns 8 default roster entries',
-      agents.status === 200 && Array.isArray(agents.json) && agents.json.length === 8,
+    check('GET /api/agents returns 9 default roster entries',
+      agents.status === 200 && Array.isArray(agents.json) && agents.json.length === 9,
       `got ${agents.json?.length}`);
 
     const sent = await req('POST', '/api/im', { from: 'sol', to: 'vex', body: 'verify-test' });

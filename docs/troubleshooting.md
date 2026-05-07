@@ -2,6 +2,8 @@
 
 ## Runtime won't start
 
+- **`tritium serve` says runtime dependencies are not installed**: run `cd runtime/server && npm ci`, then `npm run doctor`.
+- **`npm ci` fails with `EACCES: symlink ... node_modules/.bin/...`**: the repo is probably on shared storage (`/storage/...`, SD card, or similar) where npm cannot create symlinks. Move the checkout to a Linux-native writable path such as `~/Coding/tritium_os`, then rerun `npm ci`.
 - **`Error: better-sqlite3 binary mismatch`**: rebuild with `npm rebuild better-sqlite3` inside `runtime/server/`.
 - **Port already in use**: change `global.dashboard_port` in `SETTINGS.jsonc`.
 - **Permission denied on `.tritium/`**: the directory is created next to your current working dir. Make sure that dir is writable, or set `global.db_path` to an absolute path.
