@@ -93,6 +93,7 @@ Useful flags: `--profile core|full`, `--with-lmstudio` (detect only), `--dry-run
 
 ```bash
 bash scripts/runtime-deps.sh ensure
+cd runtime/server
 npm run doctor
 ```
 

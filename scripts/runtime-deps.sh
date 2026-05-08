@@ -155,8 +155,7 @@ REPO_ROOT="$(_repo_root)"
 SERVER_REPO_ROOT="$REPO_ROOT/runtime/server"
 TRITIUM_HOME="${TRITIUM_HOME:-$HOME/.tritium-os}"
 STATE_DIR="$TRITIUM_HOME/state/runtime-deps"
-REPO_KEY="$(_hash_text "$REPO_ROOT")"
-REPO_KEY="${REPO_KEY%????????????????????????????????????????????????????????????????}"
+REPO_KEY="$(_hash_text "$REPO_ROOT" | cut -c1-16)"
 LOCK_HASH="$(_hash_file "$SERVER_REPO_ROOT/package-lock.json")"
 STAGE_ROOT="$TRITIUM_HOME/runtime-server/$REPO_KEY"
 RECORD_PATH="$STATE_DIR/$REPO_KEY.json"
@@ -180,7 +179,9 @@ case "$COMMAND" in
                 cd "$SERVER_REPO_ROOT"
                 npm ci
             )
-            printf '%s\n' "$SERVER_REPO_ROOT"
+            if [ "$QUIET" -eq 0 ]; then
+                printf '%s\n' "$SERVER_REPO_ROOT"
+            fi
             exit 0
         fi
 
@@ -199,7 +200,9 @@ case "$COMMAND" in
         fi
 
         _write_stage_metadata
-        printf '%s\n' "$STAGE_ROOT"
+        if [ "$QUIET" -eq 0 ]; then
+            printf '%s\n' "$STAGE_ROOT"
+        fi
         ;;
 
     path)

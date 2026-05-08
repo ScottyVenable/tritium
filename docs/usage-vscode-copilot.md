@@ -37,8 +37,8 @@ bash scripts/install-adapter.sh --target /path/to/repo --adapter github-copilot-
 Run the runtime alongside VS Code:
 
 ```bash
+bash /path/to/tritium/scripts/runtime-deps.sh ensure
 cd /path/to/tritium/runtime/server
-npm ci
 npm run doctor
 node ../cli/tritium.js serve
 # dashboard at http://localhost:7330

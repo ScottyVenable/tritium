@@ -13,6 +13,11 @@ const ROOT = path.resolve(__dirname, '..', '..', '..');
 const installCheck = checkRuntimeInstall(ROOT);
 const PORT = 7331; // distinct from default to avoid clashing with a running instance
 
+if (!installCheck.ok) {
+  console.error(formatRuntimeInstallHelp(installCheck));
+  process.exit(2);
+}
+
 const TMP = path.resolve(ROOT, '.tritium-verify');
 fs.rmSync(TMP, { recursive: true, force: true });
 fs.mkdirSync(TMP, { recursive: true });
@@ -34,11 +39,6 @@ const targetSettings = path.join(ROOT, 'SETTINGS.jsonc');
 const hadExisting = fs.existsSync(targetSettings);
 const backup = hadExisting ? fs.readFileSync(targetSettings, 'utf8') : null;
 fs.copyFileSync(settingsPath, targetSettings);
-
-if (!installCheck.ok) {
-  console.error(formatRuntimeInstallHelp(installCheck));
-  process.exit(2);
-}
 
 const child = spawn(process.execPath, [path.join(installCheck.serverRoot, 'src', 'index.js')], {
   cwd: installCheck.serverRoot,

@@ -29,7 +29,7 @@ export function checkRuntimeInstall(repoRoot = getRepoRoot()) {
   const usingRepoInstall = path.resolve(location.serverRoot) === path.resolve(location.repoServerRoot);
 
   return {
-    ok: missingPackages.length === 0 && (!location.needsWorkaround || !usingRepoInstall || location.runningFromStage),
+    ok: missingPackages.length === 0 && (!location.needsWorkaround || (!usingRepoInstall && location.stageFresh)),
     ...location,
     nodeModulesPresent: fs.existsSync(nodeModulesDir),
     missingPackages,
